@@ -1,5 +1,10 @@
-package com.vs.oneportfolio.main.presentaion 
+package com.vs.oneportfolio.main.presentaion
+
+import com.vs.oneportfolio.core.database.stocks.StocksEntity
+import com.vs.oneportfolio.core.gemini.StockTransaction
+
 data class HomeState(
-    val paramOne: String = "default",
-    val paramTwo: List<String> = emptyList(),
+   val text : String = "" ,
+   val loading : Boolean = false ,
+   val stocksList : List<StocksEntity> = emptyList()
 )
