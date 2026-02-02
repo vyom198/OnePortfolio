@@ -16,6 +16,7 @@ import timber.log.Timber
 
 class OnePortfolio : Application() {
     val applicationScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+   //private val socketManager :  EodhdWebSocketManager by inject()
     override fun onCreate() {
         super.onCreate()
         if(BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
@@ -30,5 +31,8 @@ class OnePortfolio : Application() {
 
             )
         }
+     //   socketManager.startGlobalSync()
+
+
     }
 }

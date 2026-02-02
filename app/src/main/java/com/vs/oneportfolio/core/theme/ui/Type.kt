@@ -36,7 +36,7 @@ val Typography.names
         fontSize = 16.sp
     )
 
-val Typography.labelMedium
+val Typography.label
     get() = TextStyle(
         fontFamily = inter,
         fontWeight = FontWeight.Normal,
@@ -48,6 +48,13 @@ val Typography.Values
         fontFamily = inter,
         fontWeight = FontWeight.Medium,
         fontSize = 15.sp,
+        letterSpacing = 0.5.sp
+    )
+val Typography.small
+    get() = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
         letterSpacing = 0.5.sp
     )
 

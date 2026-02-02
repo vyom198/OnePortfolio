@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class StockTransaction(
     val ticker: String,
     val name: String,
-    val quantity: Double,
+    val quantity: Double ,
     val totalBoughtPrice: Double
 )

@@ -12,7 +12,8 @@ data class StocksEntity(
     val name: String,
     val quantity: Double,
     val averagePrice: Double,
-    val currentPrice: Double,
+    val currentPricePerShare: Double,
+    val totalCurrentValue: Double = quantity * currentPricePerShare,
     val lastUpdated: Long = System.currentTimeMillis(),
     val currency: String = "USD",
     val exchange: String? = null

@@ -29,9 +29,9 @@ android {
             localProperties.load(localPropertiesFile.inputStream())
         }
         val apiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
-        val finhub = localProperties.getProperty("FINNHUB_API_KEY") ?: ""
+        val eodhdKey = localProperties.getProperty("FINNHUB_API_KEY") ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$apiKey\"")
-        buildConfigField("String", "FINNHUB_API_KEY", "\"$finhub\"")
+        buildConfigField("String", "EODHD_API_KEY", "\"$eodhdKey\"")
     }
 
     buildTypes {

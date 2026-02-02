@@ -9,7 +9,11 @@ fun StockTransaction.toEntity () : StocksEntity{
         name = name,
         quantity = quantity,
         averagePrice = totalBoughtPrice,
-        currentPrice = 0.0
-
+        totalCurrentValue = totalBoughtPrice,
+        currentPricePerShare = 0.0
+    )
+}
+fun Double.formats() : String {
+    return "%.2f".format(this
     )
 }

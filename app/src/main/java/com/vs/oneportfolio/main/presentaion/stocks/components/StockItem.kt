@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +31,9 @@ import com.vs.oneportfolio.core.theme.ui.LossRed
 import com.vs.oneportfolio.core.theme.ui.Values
 import com.vs.oneportfolio.core.theme.ui.names
 import com.vs.oneportfolio.core.theme.ui.normal
+import com.vs.oneportfolio.main.mapper.formats
 import com.vs.oneportfolio.main.presentaion.model.StockUI
+
 
 @Composable
 fun StockItem(item: StockUI){
@@ -60,7 +61,7 @@ fun StockItem(item: StockUI){
 
             )
             Text(
-                text =  if(item.isPositive)" +${item.absPercentage}%" else " -${item.absPercentage}%",
+                text = if(item.isPositive)" +${item.absPercentage}%" else " -${item.absPercentage}%",
                 style = MaterialTheme.typography.normal.copy(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
@@ -75,9 +76,9 @@ fun StockItem(item: StockUI){
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            InvestedAmt("Invested",item.averagePrice.toString())
+            InvestedAmt("Invested",item.averagePrice.formats())
             Spacer(modifier = Modifier.weight(1f))
-            InvestedAmt("Current Value",item.currentValue.toString())
+            InvestedAmt("Current Value",item.currentPrice.formats())
         }
         Spacer(modifier = Modifier.height(15.dp))
         HorizontalDivider(
@@ -153,3 +154,4 @@ fun InvestedAmt(text: String, amt : String) {
         )
     }
 }
+

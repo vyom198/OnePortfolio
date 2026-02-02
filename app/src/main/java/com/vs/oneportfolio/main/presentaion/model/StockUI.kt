@@ -1,5 +1,6 @@
 package com.vs.oneportfolio.main.presentaion.model
 
+import com.vs.oneportfolio.main.mapper.formats
 
 
 data class StockUI(
@@ -11,27 +12,22 @@ data class StockUI(
  val currentPrice: Double,
  val lastUpdated: Long = System.currentTimeMillis(),
 ){
-    val currentValue: Double
-        get() = currentPrice * quantity
 
-//    val totalInvestment: Double
-//        get() = averagePrice * quantity
 
-    // The raw math (needed for color logic)
     val rawGainOrLoss: Double
-        get() = currentValue - averagePrice
+        get() = currentPrice - averagePrice
 
     // 1. ABSOLUTE VALUE for the UI Text
-    val absGainOrLoss: Double
-        get() = kotlin.math.abs(rawGainOrLoss)
+    val absGainOrLoss: String
+        get() = kotlin.math.abs(rawGainOrLoss).formats()
 
     // 2. ABSOLUTE PERCENTAGE for the UI Text
-    val absPercentage: Double
+    val absPercentage: String
         get() = if (averagePrice > 0) {
             kotlin.math.abs((rawGainOrLoss / averagePrice) * 100)
         } else {
             0.0
-        }
+        }.formats()
 
     // 3. COLOR LOGIC (Still based on the raw value)
     val isPositive: Boolean
@@ -39,3 +35,4 @@ data class StockUI(
 
 
 }
+
