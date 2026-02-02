@@ -6,6 +6,7 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.foundation.clickable
  import androidx.compose.foundation.layout.Arrangement
  import androidx.compose.foundation.layout.Column
+ import androidx.compose.foundation.layout.IntrinsicSize
  import androidx.compose.foundation.layout.Row
  import androidx.compose.foundation.layout.Spacer
  import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,8 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.material.icons.filled.Add
  import androidx.compose.material.icons.filled.ArrowForward
  import androidx.compose.material.icons.filled.KeyboardArrowRight
+ import androidx.compose.material.icons.filled.TrendingDown
+ import androidx.compose.material.icons.filled.TrendingUp
  import androidx.compose.material3.Button
  import androidx.compose.material3.CenterAlignedTopAppBar
  import androidx.compose.material3.CircularProgressIndicator
@@ -46,12 +49,16 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.ui.unit.sp
  import androidx.lifecycle.compose.collectAsStateWithLifecycle
  import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
+ import com.vs.oneportfolio.core.theme.ui.LossRed
  import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
  import com.vs.oneportfolio.core.theme.ui.normal
+ import com.vs.oneportfolio.core.theme.ui.small
  import com.vs.oneportfolio.core.theme.ui.topBarTitle
+ import com.vs.oneportfolio.main.mapper.formats
  import org.koin.androidx.compose.koinViewModel
+ import kotlin.math.absoluteValue
 
- @Composable
+@Composable
 fun HomeRoot(
     viewModel: HomeViewModel = koinViewModel(),
     onNavigateToStock: () -> Unit
@@ -109,17 +116,33 @@ fun HomeScreen(
                  verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
 
-                Text(
-                    text = "Total Portfolio Value",
-                    style = MaterialTheme.typography.normal,
+                Row (
+                    modifier = Modifier.fillMaxWidth() ,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Total Portfolio Value",
+                        style = MaterialTheme.typography.normal,
                         color = SkyBlueAccent.copy(
                             0.9f
                         )
 
 
-                )
+                    )
+                    Icon(
+                        imageVector = if (state.isPositive) Icons.Filled.TrendingUp else Icons.Filled.TrendingDown,
+                        contentDescription = null,
+                        modifier = Modifier.size(
+                            34.dp
+                        ),
+                        tint = if (state.isPositive) EmeraldGreen else LossRed
+
+                    )
+
+                }
                 Text(
-                    text = "$${state.totalPortfolioValue}",
+                    text = "$${state.totalPortfolioValue.formats()}",
                     style = MaterialTheme.typography.normal.copy(
                         fontWeight = FontWeight.SemiBold ,
                         fontSize = 30.sp ,
@@ -128,17 +151,17 @@ fun HomeScreen(
                     )
                 )
                 Text(
-                    text = "+$2550.00(14.17%)",
+                    text = "${if(state.isPositive){"+"} else {"-"}}$${state.absPnL.formats()}(${state.pnlPercentage.absoluteValue.formats()}%)",
                     style = MaterialTheme.typography.normal.copy(
                         fontWeight = FontWeight.SemiBold ,
                         fontSize = 16.sp ,
                         lineHeight = 20.sp,
-                        color = EmeraldGreen
+                        color = if(state.isPositive) EmeraldGreen else LossRed
 
                     )
                 )
                 Text(
-                    text = "Total Invested: $18,000",
+                    text = "Total Invested: $${state.totalInvested.formats()}",
                     style = MaterialTheme.typography.normal.copy(
                         fontWeight = FontWeight.SemiBold ,
                         fontSize = 14.sp ,
@@ -179,7 +202,7 @@ fun HomeScreen(
                             text = "Stocks",
                             style = MaterialTheme.typography.normal.copy(
                                 fontWeight = FontWeight.W600,
-                                fontSize = 18.sp ,
+                                fontSize = 18.sp,
                                 lineHeight = 26.sp,
                             )
                         )
@@ -187,50 +210,58 @@ fun HomeScreen(
                         Row(modifier = Modifier.wrapContentSize()) {
                             Text(
                                 text = "Invested: ",
-                                style = MaterialTheme.typography.normal.copy(
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 14.sp ,
-                                    lineHeight = 20.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "$15,000",
-                                style = MaterialTheme.typography.normal.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 14.sp ,
-                                    lineHeight = 20.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                text = "$${state.totalInvested.formats()}",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+
                             )
 
 
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                text = "+$15000",
-                                style = MaterialTheme.typography.normal.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 14.sp ,
-                                    lineHeight = 20.sp,
-                                    color = EmeraldGreen
-                                )
-                            )
-                            Spacer(modifier = Modifier.width(20.dp))
-                                Icon(
-                                    imageVector = Icons.Default.KeyboardArrowRight,
-                                    modifier = Modifier.size(
-                                        24.dp
-                                    ).clickable{
-                                        onNavigateToStock()
-                                    },
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary
+                                text = if (state.isTradePositive) {
+                                    "+$${state.tradeabs.formats()}"
+                                } else {
+                                    "-$${state.tradeabs.formats()}"
+                                },
+                                style = MaterialTheme.typography.small,
+                                color = if (state.isTradePositive) EmeraldGreen else LossRed
 
-                                )
+                            )
 
 
                         }
+                       Spacer(modifier = Modifier.height(10.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
 
+                        ) {
+
+                            Text(
+                                text = "Total Stocks: ${state.totalItemsInTrade}",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                            )
+
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowRight,
+                            modifier = Modifier.size(
+                                24.dp
+                            ).clickable {
+                                onNavigateToStock()
+                            },
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+
+                        )
+                    }
 
                     }
                 }

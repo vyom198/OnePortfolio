@@ -20,8 +20,18 @@ interface StockDao {
     suspend fun deleteStock(id: Long)
 
 
-    @Query("UPDATE stocks SET currentPrice = :price WHERE ticker = :ticker")
+    @Query("UPDATE stocks SET totalCurrentValue = :price * quantity  WHERE ticker = :ticker")
     suspend fun updateStock(ticker: String , price: Double)
+
+
+    @Query("SELECT SUM(totalCurrentValue) FROM stocks")
+    fun getTotalCurrentValue(): Flow<Double>
+
+    @Query("SELECT SUM(averagePrice) FROM stocks")
+    fun getTotalInvested(): Flow<Double>
+
+     @Query("SELECT COUNT(*) FROM stocks")
+    suspend fun getCount(): Int
 }
 
 

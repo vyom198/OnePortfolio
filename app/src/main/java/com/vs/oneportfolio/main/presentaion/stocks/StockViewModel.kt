@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.gemini.StockRepository
-import com.vs.oneportfolio.core.socket.FinnhubTradeResponse
-import com.vs.oneportfolio.core.socket.FinnhubWebSocketManager
 import com.vs.oneportfolio.main.mapper.toEntity
-import com.vs.oneportfolio.main.presentaion.home.HomeAction
 import com.vs.oneportfolio.main.presentaion.model.StockUI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,14 +12,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import timber.log.Timber
+
 
 class StockViewModel(
     private val stockRepository: StockRepository,
     private val stockDao: StockDao,
-    private val socketManager: FinnhubWebSocketManager,
-    private val json : Json
+
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -31,7 +26,6 @@ class StockViewModel(
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
-                collectCurrentPrice()
                 loadStocks()
                 hasLoadedInitialData = true
             }
@@ -53,7 +47,7 @@ class StockViewModel(
                                 name = it.name,
                                 quantity = it.quantity,
                                 averagePrice = it.averagePrice,
-                                currentPrice = it.currentPrice,
+                                currentPrice = it.totalCurrentValue,
                                 lastUpdated = it.lastUpdated
                             )
                         }
@@ -63,48 +57,25 @@ class StockViewModel(
             }
         }
     }
-    private fun collectCurrentPrice (){
-        socketManager.connect()
-        viewModelScope.launch {
-            stockDao.getAllStocks().collect { stocks ->
-                stocks.forEach { stock ->
-                    // This will run every time a new stock is added to Room
-                    socketManager.subscribe(stock.ticker.uppercase())
-                }
-            }
-        }
-        viewModelScope.launch {
 
-            socketManager.priceUpdates.collect{ jsonText->
-                val data = json.decodeFromString<FinnhubTradeResponse>(jsonText)
-                Timber.Forest.i("data: $jsonText")
-                if(data.type == "trade"){
-                    val tradeData = data.data
-                    if(tradeData != null){
-                        tradeData.forEach { tradeData ->
-                            stockDao.updateStock(tradeData.s , tradeData.p)
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private fun onButtonClick(){
         viewModelScope.launch {
+            val userInput = state.value.text
             _state.update {
                 it.copy(
-                    loading = true
+                    loading = true,
+                    text = ""
                 )
             }
-            val stockDetail = stockRepository.parseStockInput(_state.value.text)
-            Timber.Forest.d("stockDetail: $stockDetail")
+            val stockDetail = stockRepository.parseStockInput(userInput)
             if(stockDetail != null){
                 stockDao.insertStock(stockDetail.toEntity())
             }
             _state.update {
                 it.copy(
-                    loading = false
+                    loading = false ,
+                    isAdding = false
                 )
             }
         }

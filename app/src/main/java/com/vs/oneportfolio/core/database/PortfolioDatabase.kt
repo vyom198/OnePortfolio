@@ -7,7 +7,7 @@ import com.vs.oneportfolio.core.database.stocks.StocksEntity
 
 @Database(
     entities = [StocksEntity::class],
-    version = 1,
+    version = 2,
 )
 abstract class PortfolioDatabase : RoomDatabase() {
      abstract val stockDao : StockDao
