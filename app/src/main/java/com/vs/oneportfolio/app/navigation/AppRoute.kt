@@ -7,4 +7,6 @@ sealed interface AppRoute {
     @Serializable
     object  Home : AppRoute
 
+    @Serializable
+    object Stock : AppRoute
 }

@@ -13,6 +13,43 @@ val inter = FontFamily(Font(
     resId = R.font.inter_variablefont_opsz_wght
 ))
 
+val Typography.normal
+    get() = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    )
+val Typography.topBarTitle
+    get() = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    )
+val Typography.names
+    get() = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp
+    )
+
+val Typography.labelMedium
+    get() = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        letterSpacing = 0.5.sp
+    )
+val Typography.Values
+    get() = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.Medium,
+        fontSize = 15.sp,
+        letterSpacing = 0.5.sp
+    )
 
 
 
@@ -20,8 +57,8 @@ val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = inter,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
         letterSpacing = 0.5.sp
     ),
 
