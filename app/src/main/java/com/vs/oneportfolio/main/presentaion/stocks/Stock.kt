@@ -159,6 +159,7 @@ fun StockScreen(
                     ){
                         OutlinedTextField(
                             value = state.text,
+                            singleLine = true,
                             textStyle = MaterialTheme.typography.normal ,
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = CardSurface,

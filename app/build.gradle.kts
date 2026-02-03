@@ -29,9 +29,9 @@ android {
             localProperties.load(localPropertiesFile.inputStream())
         }
         val apiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
-        val eodhdKey = localProperties.getProperty("FINNHUB_API_KEY") ?: ""
+        val finKey = localProperties.getProperty("FINNHUB_API_KEY") ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$apiKey\"")
-        buildConfigField("String", "EODHD_API_KEY", "\"$eodhdKey\"")
+        buildConfigField("String", "FINNHUB_API_KEY", "\"$finKey\"")
     }
 
     buildTypes {
@@ -80,7 +80,7 @@ dependencies {
 
     // DI - Koin
     implementation(libs.bundles.koin)
-
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     // Navigation
     implementation(libs.androidx.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
@@ -96,7 +96,13 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.material.icons.extended)
 
-    implementation("io.finnhub:kotlin-client:2.0.25")
-    implementation("com.google.ai.client.generativeai:generativeai:0.7.0")
+    implementation(libs.kotlin.client)
 
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.serialization)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
+
+    implementation(libs.ktor.client.okhttp)
+    //implementation(libs.ktor.client.android)
 }

@@ -11,8 +11,10 @@ val geminiModule = module {
             modelName = "gemini-2.5-flash-lite",
             apiKey = BuildConfig.GEMINI_API_KEY ,
             generationConfig = generationConfig {
-                responseMimeType = "application/json"
-            }
+               responseMimeType =  "application/json"
+            },
+
+
         )
     }
 }
