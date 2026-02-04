@@ -9,4 +9,10 @@ sealed interface AppRoute {
 
     @Serializable
     object Stock : AppRoute
+
+    @Serializable
+    object Crypto : AppRoute
 }
+
+
+

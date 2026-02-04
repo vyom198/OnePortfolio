@@ -1,12 +1,9 @@
 package com.vs.oneportfolio.main.presentaion.home
 
- import android.R.attr.fontWeight
  import androidx.compose.foundation.background
- import androidx.compose.foundation.border
  import androidx.compose.foundation.clickable
  import androidx.compose.foundation.layout.Arrangement
  import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.IntrinsicSize
  import androidx.compose.foundation.layout.Row
  import androidx.compose.foundation.layout.Spacer
  import androidx.compose.foundation.layout.fillMaxSize
@@ -14,27 +11,18 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.foundation.layout.height
  import androidx.compose.foundation.layout.padding
  import androidx.compose.foundation.layout.size
- import androidx.compose.foundation.layout.width
  import androidx.compose.foundation.layout.wrapContentHeight
  import androidx.compose.foundation.layout.wrapContentSize
  import androidx.compose.foundation.lazy.LazyColumn
- import androidx.compose.foundation.lazy.items
- import androidx.compose.foundation.shape.CircleShape
  import androidx.compose.foundation.shape.RoundedCornerShape
  import androidx.compose.material.icons.Icons
- import androidx.compose.material.icons.filled.Add
- import androidx.compose.material.icons.filled.ArrowForward
  import androidx.compose.material.icons.filled.KeyboardArrowRight
  import androidx.compose.material.icons.filled.TrendingDown
  import androidx.compose.material.icons.filled.TrendingUp
- import androidx.compose.material3.Button
  import androidx.compose.material3.CenterAlignedTopAppBar
- import androidx.compose.material3.CircularProgressIndicator
  import androidx.compose.material3.ExperimentalMaterial3Api
  import androidx.compose.material3.Icon
- import androidx.compose.material3.IconButton
  import androidx.compose.material3.MaterialTheme
- import androidx.compose.material3.OutlinedTextField
  import androidx.compose.material3.Scaffold
  import androidx.compose.material3.Text
  import androidx.compose.material3.TopAppBarDefaults
@@ -44,7 +32,6 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.draw.clip
  import androidx.compose.ui.text.font.FontWeight
- import androidx.compose.ui.tooling.preview.Preview
  import androidx.compose.ui.unit.dp
  import androidx.compose.ui.unit.sp
  import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,20 +42,23 @@ package com.vs.oneportfolio.main.presentaion.home
  import com.vs.oneportfolio.core.theme.ui.small
  import com.vs.oneportfolio.core.theme.ui.topBarTitle
  import com.vs.oneportfolio.main.mapper.formats
+ import com.vs.oneportfolio.main.mapper.toCommaString
  import org.koin.androidx.compose.koinViewModel
  import kotlin.math.absoluteValue
 
 @Composable
 fun HomeRoot(
     viewModel: HomeViewModel = koinViewModel(),
-    onNavigateToStock: () -> Unit
+    onNavigateToStock: () -> Unit ,
+    onNavigateToCrypto : () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     
     HomeScreen(
         state = state,
         onAction = viewModel::onAction,
-        onNavigateToStock = onNavigateToStock
+        onNavigateToStock = onNavigateToStock ,
+        onNavigateToCrypto = onNavigateToCrypto
     )
 }
 
@@ -77,7 +67,8 @@ fun HomeRoot(
 fun HomeScreen(
     state: HomeState,
     onAction: (HomeAction) -> Unit,
-    onNavigateToStock : () -> Unit
+    onNavigateToStock : () -> Unit,
+    onNavigateToCrypto : () -> Unit
 ) {
 
     Scaffold(
@@ -142,7 +133,7 @@ fun HomeScreen(
 
                 }
                 Text(
-                    text = "$${state.totalPortfolioValue.formats()}",
+                    text = "$${state.totalPortfolioValue.toCommaString()}",
                     style = MaterialTheme.typography.normal.copy(
                         fontWeight = FontWeight.SemiBold ,
                         fontSize = 30.sp ,
@@ -151,7 +142,7 @@ fun HomeScreen(
                     )
                 )
                 Text(
-                    text = "${if(state.isPositive){"+"} else {"-"}}$${state.absPnL.formats()}(${state.pnlPercentage.absoluteValue.formats()}%)",
+                    text = "${if(state.isPositive){"+"} else {"-"}}$${state.absPnL.toCommaString()}(${state.pnlPercentage.absoluteValue.formats()}%)",
                     style = MaterialTheme.typography.normal.copy(
                         fontWeight = FontWeight.SemiBold ,
                         fontSize = 16.sp ,
@@ -161,7 +152,7 @@ fun HomeScreen(
                     )
                 )
                 Text(
-                    text = "Total Invested: $${state.totalInvested.formats()}",
+                    text = "Total Invested: $${state.totalInvested.toCommaString()}",
                     style = MaterialTheme.typography.normal.copy(
                         fontWeight = FontWeight.SemiBold ,
                         fontSize = 14.sp ,
@@ -214,7 +205,7 @@ fun HomeScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "$${state.totalInvested.formats()}",
+                                text = "$${state.totalInvested.toCommaString()}",
                                 style = MaterialTheme.typography.small,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
 
@@ -224,9 +215,9 @@ fun HomeScreen(
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
                                 text = if (state.isTradePositive) {
-                                    "+$${state.tradeabs.formats()}"
+                                    "+$${state.tradeabs.toCommaString()}"
                                 } else {
-                                    "-$${state.tradeabs.formats()}"
+                                    "-$${state.tradeabs.toCommaString()}"
                                 },
                                 style = MaterialTheme.typography.small,
                                 color = if (state.isTradePositive) EmeraldGreen else LossRed
@@ -266,7 +257,86 @@ fun HomeScreen(
                     }
                 }
 
+                item{
+                    Column(
+                        modifier = Modifier.fillMaxWidth().clip(
+                            shape = RoundedCornerShape(16.dp)
+                        ).background(
+                            color = MaterialTheme.colorScheme.surface
 
+                        ).padding(
+                            horizontal = 16.dp,
+                            vertical = 16.dp
+
+                        ),
+                    ) {
+                        Text(
+                            text = "Crypto's",
+                            style = MaterialTheme.typography.normal.copy(
+                                fontWeight = FontWeight.W600,
+                                fontSize = 18.sp,
+                                lineHeight = 26.sp,
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(modifier = Modifier.wrapContentSize()) {
+                            Text(
+                                text = "Invested: ",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "$${state.totalInvestedInCrypto.toCommaString()}",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                            )
+
+
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = if (state.isCryptoPositive) {
+                                    "+$${state.cryptoabs.toCommaString()}"
+                                } else {
+                                    "-$${state.cryptoabs.toCommaString()}"
+                                },
+                                style = MaterialTheme.typography.small,
+                                color = if (state.isTradePositive) EmeraldGreen else LossRed
+
+                            )
+
+
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+
+                        ) {
+
+                            Text(
+                                text = "Total Crypto's: ${state.totalItemsInCrypto}",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                            )
+
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowRight,
+                                modifier = Modifier.size(
+                                    24.dp
+                                ).clickable {
+                                    onNavigateToCrypto()
+                                },
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+
+                            )
+                        }
+
+                    }
+                }
 
 
             }

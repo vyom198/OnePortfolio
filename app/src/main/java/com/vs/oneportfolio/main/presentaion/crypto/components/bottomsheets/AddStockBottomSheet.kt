@@ -1,4 +1,4 @@
-package com.vs.oneportfolio.main.presentaion.stocks.components.bottomsheets
+package com.vs.oneportfolio.main.presentaion.crypto.components.bottomsheets
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,13 +35,14 @@ import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
 import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
 import com.vs.oneportfolio.core.theme.ui.label
 import com.vs.oneportfolio.core.theme.ui.normal
+import com.vs.oneportfolio.main.presentaion.crypto.CryptoState
 import com.vs.oneportfolio.main.presentaion.stocks.StockState
 import com.vs.oneportfolio.main.presentaion.stocks.components.TickerItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddStockBottomSheet(modifier: Modifier = Modifier,
-                        state: StockState,
+                        state: CryptoState,
                         onSelect : (StockTicker) -> Unit ,
                         onTextChange : (String) -> Unit ,
                         onClear : () -> Unit ,
@@ -81,13 +82,13 @@ fun AddStockBottomSheet(modifier: Modifier = Modifier,
                         contentDescription = null,
                         tint = SkyBlueAccent,
                         modifier = Modifier.size(24.dp).clickable {
-                            onDismiss()
+                           onClear()
                         }
                     )
                 },
                 placeholder = {
                     Text(
-                        text = stringResource(R.string.input_hint),
+                        text = "search your crypto",
                         style = MaterialTheme.typography.normal,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                             alpha = 0.4f
@@ -97,7 +98,7 @@ fun AddStockBottomSheet(modifier: Modifier = Modifier,
             )
             if (state.tickerList.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Stocks" , style = MaterialTheme.typography.label,
+                Text(text = "Crypto's" , style = MaterialTheme.typography.label,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(8.dp))
                 LazyColumn(

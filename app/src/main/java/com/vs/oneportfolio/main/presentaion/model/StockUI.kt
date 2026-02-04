@@ -1,6 +1,7 @@
 package com.vs.oneportfolio.main.presentaion.model
 
 import com.vs.oneportfolio.main.mapper.formats
+import com.vs.oneportfolio.main.mapper.toCommaString
 
 
 data class StockUI(
@@ -19,7 +20,7 @@ data class StockUI(
 
     // 1. ABSOLUTE VALUE for the UI Text
     val absGainOrLoss: String
-        get() = kotlin.math.abs(rawGainOrLoss).formats()
+        get() = kotlin.math.abs(rawGainOrLoss).toCommaString()
 
     // 2. ABSOLUTE PERCENTAGE for the UI Text
     val absPercentage: String

@@ -2,6 +2,8 @@ package com.vs.oneportfolio.main.mapper
 
 import com.vs.oneportfolio.core.database.stocks.StocksEntity
 import com.vs.oneportfolio.core.gemini.StockTransaction
+import java.text.NumberFormat
+import java.util.Locale
 
 //fun StockTransaction.toEntity () : StocksEntity{
 //    return StocksEntity(
@@ -16,4 +18,15 @@ import com.vs.oneportfolio.core.gemini.StockTransaction
 fun Double.formats() : String {
     return "%.2f".format(this
     )
+}
+fun Double.toCommaString(
+    minDecimals: Int = 0,
+    maxDecimals: Int = 2,
+    locale: Locale = Locale.US
+): String {
+    val formatter = NumberFormat.getInstance(locale).apply {
+        minimumFractionDigits = minDecimals
+        maximumFractionDigits = maxDecimals
+    }
+    return formatter.format(this)
 }
