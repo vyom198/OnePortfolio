@@ -35,13 +35,13 @@ class HomeViewModel(
 
     private fun gettradeCount (){
         viewModelScope.launch {
-            val count = stockDao.getCount()
-            _state.update {
-                it.copy(
-                    totalItemsInTrade = count
-                )
+             stockDao.getCount().collect {count->
+                _state.update {
+                    it.copy(
+                        totalItemsInTrade = count
+                    )
+                }
             }
-
         }
     }
     private fun loadPortfolioData(){

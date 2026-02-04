@@ -41,4 +41,32 @@ class FinnHubManager(
         }
     }
 
+    suspend fun getSymbols(query: String): Result<List<StockTicker>, NetworkError> {
+        val response = try {
+            httpClient.get("https://finnhub.io/api/v1/search") {
+                parameter("q", query)
+                parameter("token", API_TOKEN)
+            }
+        } catch (e: Exception) {
+            val error = when(e) {
+                is UnresolvedAddressException -> NetworkError.NO_INTERNET
+                is SerializationException -> NetworkError.SERIALIZATION
+                else -> NetworkError.UNKNOWN
+            }
+            return Result.Error(error)
+        }
+
+        return when (response.status.value) {
+            in 200..299 -> {
+                // IMPORTANT: Parse as the Wrapper class, then return the .result list
+                val searchResponse = response.body<FinnHubSearchResponse>()
+                Result.Success(searchResponse.result)
+            }
+            401 -> Result.Error(NetworkError.UNAUTHORIZED)
+            408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
+            in 500..599 -> Result.Error(NetworkError.SERVER_ERROR)
+            else -> Result.Error(NetworkError.UNKNOWN)
+        }
+    }
+
 }
