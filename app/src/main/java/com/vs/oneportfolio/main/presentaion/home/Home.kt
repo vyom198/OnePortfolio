@@ -173,7 +173,9 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize() ,
+                verticalArrangement = Arrangement.spacedBy(10.dp
+                )
             ) {
 
                 item{
@@ -301,7 +303,7 @@ fun HomeScreen(
                                     "-$${state.cryptoabs.toCommaString()}"
                                 },
                                 style = MaterialTheme.typography.small,
-                                color = if (state.isTradePositive) EmeraldGreen else LossRed
+                                color = if (state.isCryptoPositive) EmeraldGreen else LossRed
 
                             )
 

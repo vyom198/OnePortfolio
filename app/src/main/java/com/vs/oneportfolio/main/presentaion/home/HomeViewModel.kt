@@ -2,6 +2,7 @@ package com.vs.oneportfolio.main.presentaion.home
 
  import androidx.lifecycle.ViewModel
  import androidx.lifecycle.viewModelScope
+ import com.vs.oneportfolio.core.database.crypto.CryptoDao
  import com.vs.oneportfolio.core.database.stocks.StockDao
  import kotlinx.coroutines.flow.MutableStateFlow
  import kotlinx.coroutines.flow.SharingStarted
@@ -13,7 +14,8 @@ package com.vs.oneportfolio.main.presentaion.home
 
 
 class HomeViewModel(
-   private  val stockDao: StockDao
+   private  val stockDao: StockDao,
+    private val cryptoDao: CryptoDao
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -43,6 +45,15 @@ class HomeViewModel(
                 }
             }
         }
+        viewModelScope.launch {
+            cryptoDao.getCount().collect { count ->
+                _state.update {
+                    it.copy(
+                        totalItemsInCrypto = count
+                    )
+                }
+            }
+        }
     }
     private fun loadPortfolioData(){
         viewModelScope.launch {
@@ -62,6 +73,27 @@ class HomeViewModel(
                         totalInvested = totalInvested
                     )
                 }
+            }
+        }
+
+        viewModelScope.launch {
+            cryptoDao.getTotalCurrentValue().collectLatest {
+                totalCurrentValue ->
+                _state.update {
+                    it.copy(
+                      totalCurrentValueOfCrypto = totalCurrentValue
+                    )
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            cryptoDao.getTotalInvested().collectLatest { totalInvested ->
+                _state.update {
+                    it.copy(totalInvestedInCrypto = totalInvested)
+
+                }
+
             }
         }
 

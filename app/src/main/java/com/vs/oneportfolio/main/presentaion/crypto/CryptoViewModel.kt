@@ -7,6 +7,7 @@ import com.vs.oneportfolio.core.database.crypto.CryptoEntity
 import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.database.stocks.StocksEntity
 import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
+import com.vs.oneportfolio.core.finnhubNetwork.cryptoDtos.CoinMetadata
 import com.vs.oneportfolio.core.finnhubNetwork.util.Result
 import com.vs.oneportfolio.main.presentaion.model.CryptoUI
 import com.vs.oneportfolio.main.presentaion.model.StockUI
@@ -33,7 +34,7 @@ class CryptoViewModel(
         .onStart {
             if (!hasLoadedInitialData) {
                 getSearchResults()
-                loadStocks()
+                loadCryptos()
                 hasLoadedInitialData = true
             }
         }
@@ -50,10 +51,11 @@ class CryptoViewModel(
                 .collectLatest { query ->
                     if (query.isBlank()) return@collectLatest
 
-                    val result = finnHubManager.getSymbols(query)
+                    val result = finnHubManager.fetchCoinMetadata(query)
                     when (result) {
-                        is com.vs.oneportfolio.core.finnhubNetwork.util.Result.Success -> {
-                            _state.update { it.copy(tickerList = result.data) }
+                        is Result.Success -> {
+                            val list = listOf(result.data)
+                            _state.update { it.copy(tickerList = list as List<CoinMetadata>) }
                         }
                         is Result.Error -> {
                             Timber.e("Search Error: ${result.error}")
@@ -62,12 +64,13 @@ class CryptoViewModel(
                 }
         }
     }
-    private fun loadStocks (){
+    private fun loadCryptos (){
         viewModelScope.launch {
-           cryptoDao.getAllCrypto().collect { stocks ->
+           cryptoDao.getAllCrypto().collect { cryptos ->
+                Timber.d("Cryptos: $cryptos")
                 _state.update {
                     it.copy(
-                       cryptoList = stocks.map {
+                       cryptoList = cryptos.map { it ->
                             CryptoUI(
                                 id = it.id,
                                 ticker = it.ticker,
@@ -113,7 +116,7 @@ class CryptoViewModel(
             val tickerItem = _state.value.selectedTicker
             val cryptoItem = CryptoEntity(
                 ticker = tickerItem!!.symbol,
-                name = tickerItem.description,
+                name = tickerItem.slug
             )
             cryptoDao.insertCrypto(cryptoItem)
 
@@ -176,7 +179,7 @@ class CryptoViewModel(
             is CryptoAction.onSelect -> {
                 _state.update {
                     it.copy(
-                        selectedTicker = action.tickerItem
+                        selectedTicker = action.cryptoItem
                     )
                 }
             }

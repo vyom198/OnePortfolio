@@ -1,7 +1,6 @@
 package com.vs.oneportfolio.main.presentaion.stocks
 
-import com.vs.oneportfolio.core.finnhubNetwork.StockTicker
-import com.vs.oneportfolio.main.presentaion.home.HomeAction
+import com.vs.oneportfolio.core.finnhubNetwork.stockDtos.StockTicker
 import com.vs.oneportfolio.main.presentaion.model.StockUI
 
 sealed interface StockAction {

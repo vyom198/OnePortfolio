@@ -1,6 +1,7 @@
 package com.vs.oneportfolio.main.presentaion.crypto
 
-import com.vs.oneportfolio.core.finnhubNetwork.StockTicker
+import com.vs.oneportfolio.core.finnhubNetwork.cryptoDtos.CoinMetadata
+import com.vs.oneportfolio.core.finnhubNetwork.stockDtos.StockTicker
 import com.vs.oneportfolio.main.presentaion.model.CryptoUI
 
 sealed interface CryptoAction {
@@ -12,5 +13,5 @@ sealed interface CryptoAction {
     data object Clear : CryptoAction
     data class AddShare(val name : CryptoUI ) : CryptoAction
     data class onUpdateClick(val quantity : Double, val amt : Double)  : CryptoAction
-    data class  onSelect(val tickerItem : StockTicker) : CryptoAction
+    data class  onSelect(val cryptoItem : CoinMetadata) : CryptoAction
 }

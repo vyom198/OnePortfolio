@@ -29,7 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vs.oneportfolio.R
-import com.vs.oneportfolio.core.finnhubNetwork.StockTicker
+import com.vs.oneportfolio.core.finnhubNetwork.cryptoDtos.CoinMetadata
+import com.vs.oneportfolio.core.finnhubNetwork.stockDtos.StockTicker
 import com.vs.oneportfolio.core.theme.ui.CardSurface
 import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
 import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
@@ -42,9 +43,9 @@ import com.vs.oneportfolio.main.presentaion.stocks.components.TickerItem
 @Composable
 fun AddStockBottomSheet(modifier: Modifier = Modifier,
                         state: StockState,
-                        onSelect : (StockTicker) -> Unit ,
-                        onTextChange : (String) -> Unit ,
-                        onClear : () -> Unit ,
+                        onSelect : (StockTicker) -> Unit,
+                        onTextChange : (String) -> Unit,
+                        onClear : () -> Unit,
                         onDismiss : () -> Unit,
                         onAdd : () -> Unit
 ) {

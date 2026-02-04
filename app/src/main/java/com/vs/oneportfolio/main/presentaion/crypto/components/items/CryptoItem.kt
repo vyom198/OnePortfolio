@@ -32,6 +32,7 @@ import com.vs.oneportfolio.core.theme.ui.LossRed
 import com.vs.oneportfolio.core.theme.ui.Values
 import com.vs.oneportfolio.core.theme.ui.names
 import com.vs.oneportfolio.core.theme.ui.normal
+import com.vs.oneportfolio.main.mapper.formats
 import com.vs.oneportfolio.main.mapper.toCommaString
 import com.vs.oneportfolio.main.presentaion.model.CryptoUI
 import com.vs.oneportfolio.main.presentaion.model.StockUI
@@ -139,7 +140,7 @@ fun NameComponent(name: String, ticker: String , quantity : Double ) {
 
             )
         Text(
-            text = "coins: ${quantity}",
+            text = "coins: ${quantity.formats()}",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
 
