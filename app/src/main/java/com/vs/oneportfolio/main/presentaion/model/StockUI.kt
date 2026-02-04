@@ -7,9 +7,9 @@ data class StockUI(
  val id: Long ,
  val ticker: String,
  val name: String,
- val quantity: Double,
+ val quantity:Int,
  val averagePrice: Double,
- val currentPrice: Double,
+ val currentPrice : Double,
  val lastUpdated: Long = System.currentTimeMillis(),
 ){
 
