@@ -6,16 +6,11 @@ import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.database.stocks.StocksEntity
 import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
 import com.vs.oneportfolio.core.finnhubNetwork.util.Result
-
 import com.vs.oneportfolio.main.presentaion.model.StockUI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.coroutineContext
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -77,7 +72,7 @@ class StockViewModel(
                                 id = it.id,
                                 ticker = it.ticker,
                                 name = it.name,
-                                quantity = it.quantity,
+                                quantity = it.quantity.toInt(),
                                 averagePrice = it.averagePrice,
                                 currentPrice = it.totalCurrentValue,
                                 lastUpdated = it.lastUpdated
@@ -90,7 +85,23 @@ class StockViewModel(
         }
     }
 
-
+   private fun  updateStock(quantity : Int , amt : Double){
+       viewModelScope.launch {
+           val newQuantity = _state.value.currentUpdatingStock!!.quantity + quantity
+           val newamt = _state.value.currentUpdatingStock!!.averagePrice + amt
+           stockDao.updateStockbyQuantity(
+               _state.value.currentUpdatingStock!!.id,
+              if(newQuantity<0) 0 else newQuantity,
+               if(newamt<0) 0.0 else newamt
+           )
+           _state.update {
+               it.copy(
+                   addingShare = false,
+                   currentUpdatingStock = null
+               )
+           }
+       }
+   }
     private fun onButtonClick(){
         viewModelScope.launch {
             _state.update {
@@ -162,6 +173,28 @@ class StockViewModel(
                     )
                 }
             }
+
+            is StockAction.AddShare -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            currentUpdatingStock = action.name,
+                            addingShare = true
+                        )
+
+                    }
+                }
+            }
+
+            StockAction.onDismissUpdate -> {
+                _state.update {
+                    it.copy(
+                        addingShare = false,
+                        currentUpdatingStock = null
+                    )
+                }
+            }
+            is StockAction.onUpdateClick -> updateStock(action.quantity , action.amt)
         }
     }
 

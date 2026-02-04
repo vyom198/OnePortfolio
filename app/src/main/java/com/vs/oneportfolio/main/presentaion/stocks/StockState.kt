@@ -9,5 +9,7 @@ data class StockState(
     val stocksList : List<StockUI> = emptyList(),
     val tickerList : List<StockTicker> = emptyList(),
     val isAdding : Boolean = false,
-    val selectedTicker : StockTicker? = null
+    val selectedTicker : StockTicker? = null,
+    val addingShare : Boolean = false ,
+    val currentUpdatingStock : StockUI? = null
 )

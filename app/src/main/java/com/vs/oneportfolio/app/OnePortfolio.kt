@@ -63,18 +63,16 @@ class OnePortfolio : Application() {
             }
 
             // 2. A flow of tickers from the DB (emits whenever DB changes)
-            val tickerFlow = stockDao.getAllStocks()
-                .map { stocks -> stocks.map { it.ticker }.distinct() }
-                .distinctUntilChanged()
+            val tickerFlow = stockDao.getAllStocks().distinctUntilChanged()
 
             // 3. Combine them: Update prices if timer ticks OR tickers change
-            combine(timerFlow, tickerFlow) { _, tickers ->
-                tickers
-            }.collect { tickers ->
-                tickers.forEach { ticker ->
-                    val result = networkManager.getQuotePrice(ticker)
+            combine(timerFlow, tickerFlow) { _, stocks ->
+                stocks
+            }.collect { stocks ->
+                stocks.forEach { stock ->
+                    val result = networkManager.getQuotePrice(stock.ticker)
                     if (result is Result.Success) {
-                        stockDao.updateStock(ticker, result.data)
+                        stockDao.updateStock(stock.ticker, result.data)
                     }
                 }
             }

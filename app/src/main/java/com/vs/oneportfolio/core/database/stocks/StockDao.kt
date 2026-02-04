@@ -32,6 +32,12 @@ interface StockDao {
 
      @Query("SELECT COUNT(*) FROM stocks")
      fun getCount(): Flow<Int>
+
+     @Query("SELECT * FROM stocks WHERE id = :id")
+    suspend fun getStockById(id: Long): StocksEntity?
+
+     @Query("UPDATE stocks SET quantity = :quantity , averagePrice = :price WHERE id = :id")
+     suspend fun updateStockbyQuantity( id: Long , quantity : Int , price : Double)
 }
 
 
