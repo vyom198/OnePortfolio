@@ -199,7 +199,7 @@ fun HomeScreen(
                         ),
                     ) {
                         Text(
-                            text = "Stocks",
+                            text = "Stocks & ETFs",
                             style = MaterialTheme.typography.normal.copy(
                                 fontWeight = FontWeight.W600,
                                 fontSize = 18.sp,

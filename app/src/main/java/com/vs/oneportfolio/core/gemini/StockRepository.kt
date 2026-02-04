@@ -1,10 +1,13 @@
 package com.vs.oneportfolio.core.gemini
 
 import com.google.ai.client.generativeai.GenerativeModel
+import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 
-class StockRepository(private val model: GenerativeModel) {
+class StockRepository(
+    private val model: GenerativeModel,
+) {
 
     suspend fun parseStockInput(userInput: String): StockTransaction? {
         val json = Json {
@@ -14,8 +17,7 @@ class StockRepository(private val model: GenerativeModel) {
         val prompt = """
             Extract the stock transaction details from this text: "$userInput"
             Return ONLY a JSON object with these keys: 
-            "ticker" (string, e.g. AAPL), 
-            "name" (string, e.g. Apple Inc), 
+            "name" (string, e.g. apple), 
             "quantity" (number),
             "totalBoughtPrice" (number).
         """.trimIndent()

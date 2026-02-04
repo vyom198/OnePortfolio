@@ -3,20 +3,30 @@ package com.vs.oneportfolio.main.presentaion.stocks
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vs.oneportfolio.core.database.stocks.StockDao
-import com.vs.oneportfolio.core.gemini.StockRepository
-import com.vs.oneportfolio.main.mapper.toEntity
+import com.vs.oneportfolio.core.database.stocks.StocksEntity
+import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
+import com.vs.oneportfolio.core.finnhubNetwork.util.Result
+
 import com.vs.oneportfolio.main.presentaion.model.StockUI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.coroutineContext
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class StockViewModel(
-    private val stockRepository: StockRepository,
     private val stockDao: StockDao,
+    private val finnHubManager: FinnHubManager
 
 ) : ViewModel() {
 
@@ -26,6 +36,7 @@ class StockViewModel(
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
+                getSearchResults()
                 loadStocks()
                 hasLoadedInitialData = true
             }
@@ -35,6 +46,27 @@ class StockViewModel(
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = StockState()
         )
+
+    private fun getSearchResults() {
+        viewModelScope.launch {
+            // Collect from the state Flow directly, not flowOf
+            _state.map { it.text }
+                .distinctUntilChanged()
+                .collectLatest { query ->
+                    if (query.isBlank()) return@collectLatest
+
+                    val result = finnHubManager.getSymbols(query)
+                    when (result) {
+                        is Result.Success -> {
+                            _state.update { it.copy(tickerList = result.data) }
+                        }
+                        is Result.Error -> {
+                            Timber.e("Search Error: ${result.error}")
+                        }
+                    }
+                }
+        }
+    }
     private fun loadStocks (){
         viewModelScope.launch {
             stockDao.getAllStocks().collect { stocks ->
@@ -61,21 +93,25 @@ class StockViewModel(
 
     private fun onButtonClick(){
         viewModelScope.launch {
-            val userInput = state.value.text
             _state.update {
                 it.copy(
                     loading = true,
                     text = ""
                 )
             }
-            val stockDetail = stockRepository.parseStockInput(userInput)
-            if(stockDetail != null){
-                stockDao.insertStock(stockDetail.toEntity())
-            }
+            val tickerItem = _state.value.selectedTicker
+            val stockItem = StocksEntity(
+                ticker = tickerItem!!.symbol,
+                name = tickerItem.description,
+            )
+            stockDao.insertStock(stockItem)
+
             _state.update {
                 it.copy(
                     loading = false ,
-                    isAdding = false
+                    isAdding = false,
+                    selectedTicker = null,
+                    tickerList = emptyList()
                 )
             }
         }
@@ -110,7 +146,22 @@ class StockViewModel(
                 }
             }
 
-
+            StockAction.Clear -> {
+                _state.update {
+                    it.copy(
+                        text = "" ,
+                        selectedTicker = null,
+                        tickerList = emptyList()
+                    )
+                }
+            }
+            is StockAction.onSelect -> {
+                _state.update {
+                    it.copy(
+                        selectedTicker = action.tickerItem
+                    )
+                }
+            }
         }
     }
 

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,8 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -48,17 +53,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.trace
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vs.oneportfolio.R
+import com.vs.oneportfolio.core.finnhubNetwork.StockTicker
 import com.vs.oneportfolio.core.theme.ui.CardSurface
 import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
 import com.vs.oneportfolio.core.theme.ui.OnePortfolioTheme
+import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
+import com.vs.oneportfolio.core.theme.ui.label
+import com.vs.oneportfolio.core.theme.ui.names
 import com.vs.oneportfolio.core.theme.ui.normal
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
 import com.vs.oneportfolio.main.presentaion.home.HomeAction
 import com.vs.oneportfolio.main.presentaion.model.StockUI
 import com.vs.oneportfolio.main.presentaion.stocks.components.StockItem
+import com.vs.oneportfolio.main.presentaion.stocks.components.TickerItem
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -125,7 +136,7 @@ fun StockScreen(
 
                 },
                 title = {
-                    Text("Your Stocks",
+                    Text("Your Stocks & ETFs",
                         style = MaterialTheme.typography.topBarTitle)
 
                 }
@@ -141,40 +152,41 @@ fun StockScreen(
             if(state.isAdding){
                 ModalBottomSheet(
                     onDismissRequest = { onAction(StockAction.onDismiss) },
+                    containerColor = MaterialTheme.colorScheme.background,
                     sheetState = sheetState,
-                    modifier = Modifier.padding(
-                        horizontal = 4.dp,
-                        vertical = 16.dp
-                    )
-
+                    modifier = Modifier
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight().padding(
-                                horizontal = 16.dp
-                            ),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(
+                            horizontal = 16.dp
 
-                    ){
+                        ),
+
+                    ) {
                         OutlinedTextField(
                             value = state.text,
-                            singleLine = true,
-                            textStyle = MaterialTheme.typography.normal ,
+                            textStyle = MaterialTheme.typography.normal,
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = CardSurface,
                                 unfocusedContainerColor = CardSurface,
-                                focusedIndicatorColor = androidx.compose.ui.graphics.Color.White,
-                                unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.White,
                             ),
 
                             onValueChange = {
                                 onAction(StockAction.onTextChange(it))
                             },
-                            modifier = Modifier.height(60.dp).width(
-                                350.dp
-                            ),
-                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier.height(60.dp).fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            maxLines = 1,
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = null,
+                                    tint = SkyBlueAccent,
+                                    modifier = Modifier.size(24.dp).clickable {
+                                        onAction(StockAction.Clear)
+                                    }
+                                )
+                            },
                             placeholder = {
                                 Text(
                                     text = stringResource(R.string.input_hint),
@@ -185,35 +197,54 @@ fun StockScreen(
                                 )
                             }
                         )
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(
-                            onClick = {
-                                onAction(StockAction.onButtonClick)
-                            },
-                            modifier = Modifier.size(24.dp).background(
-                                color = CardSurface ,
-                                shape = CircleShape
-                            ),
-                            shape = CircleShape,
+                        if (state.tickerList.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                             Text(text = "Stocks" , style = MaterialTheme.typography.label,
+                                 color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
 
                         ) {
-                            if(state.loading){
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    strokeWidth = 1.dp
 
-                                    )
-                            }else{
-                                Icon(
-                                    imageVector = Icons.Filled.Send,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary
+                            items(
+                                state.tickerList
+                            ) {
 
-                                )
+                                TickerItem(
+                                    it,
+                                    isSelected = it == state.selectedTicker,
+                                    onSelected = { ticker ->
+                                        onAction(
+                                            StockAction.onSelect(ticker)
+                                        )
+
+                                    })
                             }
-
                         }
+                    }
+                      if(state.selectedTicker !=null){
+                          Spacer(modifier = Modifier.height(8.dp))
+                          Button(
+                              onClick = {
+                                  onAction(StockAction.onButtonClick)
+                              },
+                              shape = RoundedCornerShape(12.dp),
+                               colors = ButtonDefaults.buttonColors(
+                                   containerColor = EmeraldGreen,
+
+                               ),
+                              modifier = Modifier.fillMaxWidth().height(50.dp)
+                          ) {
+                             Text(
+                                 text = "Add to Assets",
+                                 style = MaterialTheme.typography.normal
+                             )
+
+                          }
+                      }
+
                     }
                 }
             }
@@ -232,6 +263,7 @@ fun StockScreen(
 
     }
 }
+
 
 
 

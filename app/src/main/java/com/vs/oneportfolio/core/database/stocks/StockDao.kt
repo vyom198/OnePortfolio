@@ -31,7 +31,7 @@ interface StockDao {
     fun getTotalInvested(): Flow<Double>
 
      @Query("SELECT COUNT(*) FROM stocks")
-    suspend fun getCount(): Int
+     fun getCount(): Flow<Int>
 }
 
 

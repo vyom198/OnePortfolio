@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">OnePortfolio</string>
-    <string name="input_hint">I bought 5 tesla shares at 2000 dollars</string>
+    <string name="input_hint">search stock by ticker or name</string>
 </resources>
