@@ -18,6 +18,10 @@ val databaseModule = module{
        get<PortfolioDatabase>().stockDao
 
    }
+    single {
+        get<PortfolioDatabase>().cryptoDao
+
+    }
 
 
 

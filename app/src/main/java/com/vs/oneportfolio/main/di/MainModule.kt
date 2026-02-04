@@ -1,6 +1,7 @@
 package com.vs.oneportfolio.main.di
 
 import com.vs.oneportfolio.core.gemini.StockRepository
+import com.vs.oneportfolio.main.presentaion.crypto.CryptoViewModel
 import com.vs.oneportfolio.main.presentaion.home.HomeViewModel
 import com.vs.oneportfolio.main.presentaion.stocks.StockViewModel
 import kotlinx.serialization.json.Json
@@ -13,6 +14,8 @@ val mainModule = module {
     }
     viewModelOf(::HomeViewModel)
     viewModelOf(::StockViewModel)
+    viewModelOf(::CryptoViewModel)
+
     single {
         Json {
             ignoreUnknownKeys = true

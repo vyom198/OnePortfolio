@@ -1,4 +1,4 @@
-package com.vs.oneportfolio.main.presentaion.stocks
+package com.vs.oneportfolio.main.presentaion.crypto
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,26 +19,25 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
-import com.vs.oneportfolio.main.presentaion.stocks.components.bottomsheets.AddStockBottomSheet
-import com.vs.oneportfolio.main.presentaion.stocks.components.StockItem
-import com.vs.oneportfolio.main.presentaion.stocks.components.bottomsheets.UpdateStockItem
+import com.vs.oneportfolio.main.presentaion.crypto.components.bottomsheets.AddStockBottomSheet
+import com.vs.oneportfolio.main.presentaion.crypto.components.bottomsheets.UpdateStockItem
+import com.vs.oneportfolio.main.presentaion.crypto.components.items.CryptoItem
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun StockRoot(
-    viewModel: StockViewModel = koinViewModel(),
-    onBackClick: () -> Unit
-){
+fun CryptoRoot(
+    viewModel: CryptoViewModel = koinViewModel() ,
+    onBackClick : () -> Unit
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    StockScreen(
+    CryptoScreen(
         state = state,
         onAction = viewModel::onAction,
         onBackClick = onBackClick
@@ -47,10 +46,10 @@ fun StockRoot(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StockScreen(
-    state: StockState,
-    onAction: (StockAction) -> Unit,
-    onBackClick : () -> Unit
+fun CryptoScreen(
+    state: CryptoState,
+    onAction: (CryptoAction) -> Unit,
+    onBackClick: () -> Unit
 ) {
     Scaffold(
         modifier = Modifier
@@ -86,14 +85,14 @@ fun StockScreen(
                         modifier = Modifier
                             .size(24.dp)
                             .clickable {
-                                onAction(StockAction.onAddIconclick)
+                                onAction(CryptoAction.onAddIconclick)
                             },
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
 
                 },
                 title = {
-                    Text("Your Stocks & ETFs",
+                    Text("Your Crypto's",
                         style = MaterialTheme.typography.topBarTitle)
 
                 }
@@ -111,10 +110,11 @@ fun StockScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
 
             ) {
-                items(state.stocksList){ item->
-                    StockItem(item,
+                items(state.cryptoList){ item->
+                    CryptoItem (
+                        item,
                         onAddShare = {
-                            onAction(StockAction.AddShare(it ))
+                            onAction(CryptoAction.AddShare( item))
                         }
                     )
 
@@ -124,31 +124,31 @@ fun StockScreen(
                 AddStockBottomSheet(
                     state = state,
                     onSelect = {
-                        onAction(StockAction.onSelect(it))
+                        onAction(CryptoAction.onSelect(it))
                     },
                     onTextChange = {
-                        onAction(StockAction.onTextChange(it))
+                        onAction(CryptoAction.onTextChange(it))
                     },
                     onClear = {
-                        onAction(StockAction.Clear)
+                        onAction(CryptoAction.Clear)
                     },
                     onDismiss = {
-                        onAction(StockAction.onDismiss)
+                        onAction(CryptoAction.onDismiss)
                     },
                     onAdd = {
-                        onAction(StockAction.onButtonClick)
+                        onAction(CryptoAction.onButtonClick)
                     }
                 )
             }
 
             if(state.addingShare){
                 UpdateStockItem(
-                    stock = state.currentUpdatingStock!!,
+                    stock = state.currentUpdatingCrypto!!,
                     onDismiss = {
-                        onAction(StockAction.onDismissUpdate)
+                        onAction(CryptoAction.onDismissUpdate)
                     },
                     onAdd = { quantity, amt ->
-                        onAction(StockAction.onUpdateClick(
+                        onAction(CryptoAction.onUpdateClick(
                             quantity ,
                             amt
                         ))
@@ -160,19 +160,14 @@ fun StockScreen(
         }
 
     }
-
-
 }
-
-
-
 
 //@Preview
 //@Composable
 //private fun Preview() {
 //    OnePortfolioTheme {
-//        StockScreen(
-//            state = StockState(),
+//        CryptoScreen(
+//            state = CryptoState(),
 //            onAction = {}
 //        )
 //    }
