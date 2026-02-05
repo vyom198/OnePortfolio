@@ -238,7 +238,7 @@ fun UpdateStockItem(modifier: Modifier = Modifier,
             Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = {onAdd(
-                        quantity, amt
+                        quantity.toDouble(), amt
                     )},
                     enabled = totalCoins.isNotEmpty() && totalAmtInvested.isNotEmpty()
                             || totalCoinsSold.isNotEmpty() && soldAmount.isNotEmpty(),

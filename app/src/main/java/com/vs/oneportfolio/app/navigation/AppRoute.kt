@@ -12,6 +12,9 @@ sealed interface AppRoute {
 
     @Serializable
     object Crypto : AppRoute
+
+    @Serializable
+    object FA : AppRoute
 }
 
 

@@ -3,6 +3,7 @@ package com.vs.oneportfolio.app
 import android.app.Application
 import com.vs.oneportfolio.BuildConfig
 import com.vs.oneportfolio.app.di.appModule
+import com.vs.oneportfolio.core.database.crypto.CryptoDao
 import com.vs.oneportfolio.core.database.di.databaseModule
 import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
@@ -31,6 +32,7 @@ class OnePortfolio : Application() {
    //private val socketManager :  EodhdWebSocketManager by inject()
     private val networkManager : FinnHubManager by inject()
     private val stockDao : StockDao by inject()
+    private val cryptoDao : CryptoDao by inject()
     override fun onCreate() {
         super.onCreate()
         if(BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
@@ -49,7 +51,7 @@ class OnePortfolio : Application() {
      //   socketManager.startGlobalSync()
 
         startPriceSync()
-
+        startCrptoPriceSync()
     }
 
     private fun startPriceSync() {
@@ -73,6 +75,29 @@ class OnePortfolio : Application() {
                     val result = networkManager.getQuotePrice(stock.ticker)
                     if (result is Result.Success) {
                         stockDao.updateStock(stock.ticker, result.data)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startCrptoPriceSync(){
+        applicationScope.launch {
+            val timerFlow = flow {
+                while (true) {
+                    emit(Unit)
+                    delay(1* 60 * 1000)
+                }
+            }
+            val cryptoFlow = cryptoDao.getAllCrypto().distinctUntilChanged()
+            combine(timerFlow, cryptoFlow) { _, cryptos ->
+                cryptos
+            }.collect { cryptos ->
+                cryptos.forEach { crypto ->
+                    val result = networkManager.fetchCoinQuote(crypto.name)
+                    Timber.d("result: $result")
+                    if (result is Result.Success) {
+                        cryptoDao.updateStockbyId(crypto.id, result.data?.price?:0.0 , result.data?.lastUpdated?:""  )
                     }
                 }
             }

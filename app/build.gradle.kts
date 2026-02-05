@@ -30,8 +30,10 @@ android {
         }
         val apiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
         val finKey = localProperties.getProperty("FINNHUB_API_KEY") ?: ""
+        val cmcKey = localProperties.getProperty("X-CMC_PRO_API_KEY") ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$apiKey\"")
         buildConfigField("String", "FINNHUB_API_KEY", "\"$finKey\"")
+        buildConfigField("String", "X_CMC_PRO_API_KEY", "\"$cmcKey\"")
     }
 
     buildTypes {

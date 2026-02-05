@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.vs.oneportfolio.main.presentaion.crypto.CryptoRoot
+import com.vs.oneportfolio.main.presentaion.fixedAssets.FixedAssetsRoot
 import com.vs.oneportfolio.main.presentaion.home.HomeRoot
 import com.vs.oneportfolio.main.presentaion.stocks.StockRoot
 
@@ -30,7 +31,14 @@ fun NavigationRoot(
                         launchSingleTop = true
 
                     }
+                } ,
+                onNavigateToFA = {
+                      navController.navigate(AppRoute.FA) {
+                        launchSingleTop = true
+
+                    }
                 }
+
             )
 
         }
@@ -48,6 +56,18 @@ fun NavigationRoot(
                   }
               )
           }
+
+
+        composable<AppRoute.FA> {
+            FixedAssetsRoot (
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+
+
+
+        }
 
     }
 }

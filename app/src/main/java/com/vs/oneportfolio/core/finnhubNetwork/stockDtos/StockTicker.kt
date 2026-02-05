@@ -1,4 +1,4 @@
-package com.vs.oneportfolio.core.finnhubNetwork
+package com.vs.oneportfolio.core.finnhubNetwork.stockDtos
 
 import kotlinx.serialization.Serializable
 

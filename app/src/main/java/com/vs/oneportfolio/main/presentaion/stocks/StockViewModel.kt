@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.math.abs
 
 
 class StockViewModel(
@@ -87,8 +88,14 @@ class StockViewModel(
 
    private fun  updateStock(quantity : Int , amt : Double){
        viewModelScope.launch {
-           val newQuantity = _state.value.currentUpdatingStock!!.quantity + quantity
-           val newamt = _state.value.currentUpdatingStock!!.averagePrice + amt
+           val oldQuantity = _state.value.currentUpdatingStock!!.quantity
+           val oldAmt = _state.value.currentUpdatingStock!!.averagePrice
+           val newQuantity = oldQuantity + quantity
+           val newamt =if(quantity<0){
+               oldAmt - (oldAmt * abs(quantity)/oldQuantity)
+           }else{
+               oldAmt + amt
+           }
            stockDao.updateStockbyQuantity(
                _state.value.currentUpdatingStock!!.id,
               if(newQuantity<0) 0 else newQuantity,

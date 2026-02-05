@@ -17,8 +17,7 @@ interface CryptoDao {
     @Query("DELETE FROM crypto WHERE id = :id")
     suspend fun deleteCrypto(id: Long)
 
-    @Query("UPDATE crypto SET totalCurrentValue = :price * quantity  WHERE ticker = :ticker")
-    suspend fun updateCrypto(ticker: String , price: Double)
+
 
     @Query("SELECT SUM(totalCurrentValue) FROM crypto")
     fun getTotalCurrentValue(): Flow<Double>
@@ -31,5 +30,8 @@ interface CryptoDao {
 
     @Query("SELECT * FROM crypto WHERE id = :id")
     suspend fun getCryptoById(id: Long): CryptoEntity
+
+    @Query("UPDATE crypto SET totalCurrentValue = :newPrice * quantity, lastUpdated = :newLastUpdated WHERE id = :id")
+    suspend fun  updateStockbyId(id: Long, newPrice: Double, newLastUpdated: String)
 
 }
