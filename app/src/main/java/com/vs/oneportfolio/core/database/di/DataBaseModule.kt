@@ -23,6 +23,10 @@ val databaseModule = module{
 
     }
 
+    single {
+        get<PortfolioDatabase>().fixedIcomeDao
+
+    }
 
 
 }

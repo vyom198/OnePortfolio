@@ -4,14 +4,19 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.vs.oneportfolio.core.database.crypto.CryptoDao
 import com.vs.oneportfolio.core.database.crypto.CryptoEntity
+import com.vs.oneportfolio.core.database.fixedincome.FixedIcomeDao
+import com.vs.oneportfolio.core.database.fixedincome.FixedIncomeEntity
 import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.database.stocks.StocksEntity
 
 @Database(
-    entities = [StocksEntity::class , CryptoEntity::class],
-    version = 3,
+    entities = [StocksEntity::class , CryptoEntity::class , FixedIncomeEntity::class],
+    version = 4,
 )
 abstract class PortfolioDatabase : RoomDatabase() {
      abstract val stockDao : StockDao
      abstract val cryptoDao : CryptoDao
+
+     abstract val fixedIcomeDao : FixedIcomeDao
+
 }
