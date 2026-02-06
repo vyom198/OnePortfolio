@@ -1,11 +1,16 @@
 package com.vs.oneportfolio.main.presentaion.fixedAssets
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,11 +30,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
 import com.vs.oneportfolio.main.presentaion.crypto.CryptoAction
+import com.vs.oneportfolio.main.presentaion.fixedAssets.components.FixedAssetItem
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.AddfixedAsset
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun FixedAssetsRoot(
-    viewModel: FixedAssetsViewModel = viewModel() ,
+    viewModel: FixedAssetsViewModel = koinViewModel(),
     onBackClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -102,6 +109,23 @@ fun FixedAssetsScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
+            if(state.fixedAssets.isEmpty()){
+                Box(modifier = Modifier.fillMaxSize(),
+                    contentAlignment = androidx.compose.ui.Alignment.Center
+                    ){
+                    Text("No Assets")
+                }
+
+            }else{
+                LazyColumn(modifier = Modifier.fillMaxSize().animateContentSize(),
+                      verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                    items(state.fixedAssets) { item ->
+                       FixedAssetItem(item)
+                    }
+                }
+            }
+
              if(
                  state.isAdding
 
@@ -109,14 +133,20 @@ fun FixedAssetsScreen(
                  AddfixedAsset(
                      onDismiss = {
                          onAction(FixedAssetsAction.onDismiss)
+                     },
+                     onSaved = {
+                         onAction(FixedAssetsAction.onSaved(it))
                      }
                  )
              }
 
 
+
         }
     }
 }
+
+
 
 //@Preview
 //@Composable

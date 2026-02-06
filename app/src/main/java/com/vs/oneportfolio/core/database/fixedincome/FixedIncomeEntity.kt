@@ -16,7 +16,7 @@ data class FixedIncomeEntity(
     // --- Financials ---
     val amtPrincipal: Double,            // The original amount locked in
     val interestRatePercent: Double,     // The nominal rate (e.g., 7.0)
-    val currentValue : Double = 0.0,
+    val currentValue : Double = amtPrincipal,
     // --- The "FD Logic" Fields ---
     /** * Payout Frequency in months. 
      * 1 = Monthly, 3 = Quarterly, 12 = Annual, 0 = At Maturity 
