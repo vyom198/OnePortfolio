@@ -71,6 +71,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.vs.oneportfolio.R
+import com.vs.oneportfolio.core.database.fixedincome.FixedIncomeEntity
 import com.vs.oneportfolio.core.theme.ui.CardSurface
 import com.vs.oneportfolio.core.theme.ui.DeepNavyBg
 import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
@@ -81,7 +82,10 @@ import com.vs.oneportfolio.core.theme.ui.normal
 import com.vs.oneportfolio.main.presentaion.crypto.components.bottomsheets.CoinItem
 import com.vs.oneportfolio.main.presentaion.fixedAssets.FixedAssetsState
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.model.PayOutType
+import com.vs.oneportfolio.main.presentaion.fixedAssets.components.model.getPayOutFrequency
+import com.vs.oneportfolio.main.presentaion.model.FixedAssetUI
 import okio.inMemorySocketPair
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -90,9 +94,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddfixedAsset(
-    modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
-    //state: FixedAssetsState,
+    onSaved: (FixedIncomeEntity) -> Unit
 ) {
 
     var depositName by remember { mutableStateOf("") }
@@ -100,7 +103,6 @@ fun AddfixedAsset(
     var amtPrincipal by remember { mutableStateOf("") }
     var interestRatePercent by remember { mutableStateOf("") }
     var selected by remember { mutableStateOf(PayOutType.MONTHLY) }
-    var isCumulative by remember { mutableStateOf(false) }
     var OpenDate by remember { mutableStateOf<Long?>(null) }
     var MaturityDate by remember { mutableStateOf<Long?>(null) }
     var expanded by remember { mutableStateOf(false) }
@@ -108,6 +110,17 @@ fun AddfixedAsset(
         "Compounding", "Income"
     )
     var selectedOption by remember { mutableStateOf(radioOption[0]) }
+    val fixedAsset = FixedIncomeEntity(
+        depositName = depositName,
+        InstitutionName = InstitutionName,
+        isCumulative = selectedOption == "Compounding" ,
+        amtPrincipal = if(amtPrincipal.isNotEmpty())amtPrincipal.toDouble()else 0.0,
+        interestRatePercent = if(interestRatePercent.isNotEmpty())interestRatePercent.toDouble() else 0.0 ,
+        payoutFrequencyMonths = selected.getPayOutFrequency(),
+        dateOpened = OpenDate ?: Calendar.getInstance().timeInMillis,
+        dateMaturity = MaturityDate ?: Calendar.getInstance().timeInMillis
+    )
+
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
         containerColor = MaterialTheme.colorScheme.background,
@@ -196,23 +209,27 @@ fun AddfixedAsset(
                     .wrapContentHeight()
                     .clip(
                         shape = RoundedCornerShape(12.dp)
+                    ).border(
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = SkyBlueAccent
+                        ) ,
+                        shape = RoundedCornerShape(12.dp)
+
                     )
                     .background(
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.background
                     )
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
                         .padding(horizontal = 12.dp, vertical = 14.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
                         text = "Income PayOut Type", style = MaterialTheme.typography.label,
-                        color = MaterialTheme.colorScheme.background
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
 
                     Icon(
@@ -223,7 +240,7 @@ fun AddfixedAsset(
                                 R.drawable.arrow_down
                             }
                         ),
-                        tint = DeepNavyBg,
+                        tint = SkyBlueAccent,
                         contentDescription = null,
                         modifier = Modifier.clickable {
                             expanded = !expanded
@@ -234,7 +251,7 @@ fun AddfixedAsset(
                 Text(
                     modifier = Modifier.padding(horizontal = 12.dp),
                     text = selected.value, style = MaterialTheme.typography.names,
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.height(19.dp))
             }
@@ -247,7 +264,16 @@ fun AddfixedAsset(
                     modifier = Modifier
                         .width(maxWidth)
                         .background(
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = MaterialTheme.colorScheme.background,
+                        ).clip(
+                            shape = RoundedCornerShape(12.dp)
+                        ).border(
+                            border = BorderStroke(
+                                width = 1.dp,
+                                color = SkyBlueAccent
+                            ) ,
+                            shape = RoundedCornerShape(12.dp)
+
                         ),
                     offset = DpOffset(y = 2.dp, x = 0.dp),
                     shape = RoundedCornerShape(12.dp)
@@ -258,7 +284,7 @@ fun AddfixedAsset(
                                 Text(
                                     text = item.value,
                                     style = MaterialTheme.typography.names,
-                                    color = MaterialTheme.colorScheme.background
+                                    color = MaterialTheme.colorScheme.onPrimary
                                 )
                             },
                             onClick = {
@@ -277,20 +303,26 @@ fun AddfixedAsset(
             Spacer(modifier = Modifier.height(10.dp))
             Column(
                 modifier = Modifier
-                    .height(160.dp)
+                    .height(120.dp)
                     .fillMaxWidth()
                     .clip(
                         shape = RoundedCornerShape(12.dp)
                     )
                     .background(
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.background,
+                    ).border(
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = SkyBlueAccent
+                        ) ,
+                        shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 14.dp)
                     .selectableGroup()
             ) {
                 Text(
                     text = "Asset Type", style = MaterialTheme.typography.label,
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 radioOption.forEach { text ->
@@ -310,7 +342,7 @@ fun AddfixedAsset(
                         Spacer(modifier = Modifier.height(5.dp))
                         RadioButton(
                             colors = RadioButtonColors(
-                                unselectedColor = MaterialTheme.colorScheme.background,
+                                unselectedColor = MaterialTheme.colorScheme.onPrimary,
                                 selectedColor = SkyBlueAccent,
                                 disabledSelectedColor = MaterialTheme.colorScheme.background,
                                 disabledUnselectedColor = MaterialTheme.colorScheme.background,
@@ -322,7 +354,7 @@ fun AddfixedAsset(
                         Text(
                             text = text,
                             style = MaterialTheme.typography.names,
-                            color = MaterialTheme.colorScheme.background,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.padding(start = 10.dp)
                         )
                     }
@@ -336,7 +368,33 @@ fun AddfixedAsset(
                     OpenDate = it
                 }
             )
-
+            Spacer(modifier = Modifier.height(10.dp))
+            DatePickerFieldToModal(
+                selectedDate = MaturityDate,
+                label = " Maturity Date",
+                onSelectDate = {
+                    MaturityDate = it
+                }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                enabled = MaturityDate != null && OpenDate != null,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SkyBlueAccent,
+                ),
+                shape = RoundedCornerShape(12.dp),
+                onClick = {
+                     Timber.i(fixedAsset.toString())
+                     onSaved(fixedAsset)
+                }){
+                Text(text = "Add To Portfolio" ,
+                    style = MaterialTheme.typography.names ,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
     }
 }
@@ -356,23 +414,11 @@ fun AddAssetTextField(
     OutlinedTextField(
         value = text,
         textStyle = MaterialTheme.typography.normal,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-            unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-            focusedIndicatorColor = CardSurface,
-            unfocusedIndicatorColor = CardSurface,
-            focusedTextColor = MaterialTheme.colorScheme.background,
-            unfocusedTextColor = MaterialTheme.colorScheme.background,
-            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.background,
-            cursorColor = MaterialTheme.colorScheme.background,
-        ),
         keyboardOptions = if (isNumber) KeyboardOptions(
             keyboardType = KeyboardType.Number, imeAction = ImeAction.Next
         ) else KeyboardOptions.Default,
         onValueChange = {
             onTextChange(it)
-
         },
 
         label = {
@@ -388,23 +434,23 @@ fun AddAssetTextField(
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         maxLines = 1,
-        trailingIcon = {
+        trailingIcon = if(text.isNotEmpty()){{
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = null,
-                tint = DeepNavyBg,
+                tint = SkyBlueAccent,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(20.dp)
                     .clickable {
                         onClear?.invoke()
                     }
             )
-        },
+        }} else null ,
         placeholder = {
             Text(
                 text = hint,
                 style = MaterialTheme.typography.names,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
     )
@@ -429,11 +475,12 @@ fun DatePickerFieldToModal(
                 style = MaterialTheme.typography.label,
             )
         },
+        shape = RoundedCornerShape(12.dp),
         placeholder = {
             Text(
                 text = "MM/DD/YYYY",
                 style = MaterialTheme.typography.names,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.onPrimary
             )
         },
         trailingIcon = {
