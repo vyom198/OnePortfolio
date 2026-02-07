@@ -51,7 +51,8 @@ fun HomeRoot(
     viewModel: HomeViewModel = koinViewModel(),
     onNavigateToStock: () -> Unit ,
     onNavigateToCrypto : () -> Unit ,
-    onNavigateToFA : () -> Unit
+    onNavigateToFA : () -> Unit,
+    onNavigateToRealEstate : () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     
@@ -60,7 +61,8 @@ fun HomeRoot(
         onAction = viewModel::onAction,
         onNavigateToStock = onNavigateToStock ,
         onNavigateToCrypto = onNavigateToCrypto,
-        onNavigateToFA = onNavigateToFA
+        onNavigateToFA = onNavigateToFA,
+        onNavigateToRealEstate = onNavigateToRealEstate
     )
 }
 
@@ -71,7 +73,8 @@ fun HomeScreen(
     onAction: (HomeAction) -> Unit,
     onNavigateToStock : () -> Unit,
     onNavigateToFA : () -> Unit ,
-    onNavigateToCrypto : () -> Unit
+    onNavigateToCrypto : () -> Unit,
+    onNavigateToRealEstate : () -> Unit
 ) {
 
     Scaffold(
@@ -414,6 +417,87 @@ fun HomeScreen(
                                     24.dp
                                 ).clickable {
                                     onNavigateToFA()
+                                },
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+
+                            )
+                        }
+
+                    }
+                }
+
+                item{
+                    Column(
+                        modifier = Modifier.fillMaxWidth().clip(
+                            shape = RoundedCornerShape(16.dp)
+                        ).background(
+                            color = MaterialTheme.colorScheme.surface
+
+                        ).padding(
+                            horizontal = 16.dp,
+                            vertical = 16.dp
+
+                        ),
+                    ) {
+                        Text(
+                            text = "Real Estates",
+                            style = MaterialTheme.typography.normal.copy(
+                                fontWeight = FontWeight.W600,
+                                fontSize = 18.sp,
+                                lineHeight = 26.sp,
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(modifier = Modifier.wrapContentSize()) {
+                            Text(
+                                text = "Invested: ",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "$${state.totalInvestedInRealEstate.toCommaString()}",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                            )
+
+
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = if (state.isRealEstatePositive) {
+                                    "+$${state.realEstateAbs.toCommaString()}"
+                                } else {
+                                    "-$${state.realEstateAbs.toCommaString()}"
+                                },
+                                style = MaterialTheme.typography.small,
+                                color = if (state.isRealEstatePositive) EmeraldGreen else LossRed
+
+                            )
+
+
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+
+                        ) {
+
+                            Text(
+                                text = "Total Properties: ${state.totalItemsInRealEstate}",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                            )
+
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowRight,
+                                modifier = Modifier.size(
+                                    24.dp
+                                ).clickable {
+                                    onNavigateToRealEstate()
                                 },
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimary
