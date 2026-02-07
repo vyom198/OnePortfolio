@@ -31,4 +31,9 @@ interface FixedIcomeDao {
     @Query("SELECT SUM(currentValue) FROM fixed_deposits")
     fun getCurrentValue(): Flow<Double>
 
+    @Query("UPDATE fixed_deposits SET notifyOnInterestCredit = :enabled WHERE id = :id")
+    suspend fun updatePaymentNotify(id: Int, enabled: Boolean)
+
+    @Query("UPDATE fixed_deposits SET notifyOnMaturity = :enabled WHERE id = :id")
+    suspend fun updateMaturityNotify(id: Int, enabled: Boolean)
 }

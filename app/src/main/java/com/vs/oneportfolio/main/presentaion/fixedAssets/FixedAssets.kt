@@ -121,7 +121,15 @@ fun FixedAssetsScreen(
                       verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                     items(state.fixedAssets) { item ->
-                       FixedAssetItem(item)
+                       FixedAssetItem(item ,
+                               onNotifyPayment = {
+                                   onAction(FixedAssetsAction.onNotifyPayment(it , item))
+                               },
+                               onNotifyMaturity = {
+                                  onAction(FixedAssetsAction.onNotifyMaturity(it, item ))
+                               }
+
+                           )
                     }
                 }
             }

@@ -12,9 +12,6 @@ enum class PayOutType(
     ANNUAL(
         value = "Annual"
     ),
-    AT_MATURITY(
-        value = "At Maturity"
-    )
 }
 
 
@@ -23,19 +20,23 @@ fun Int.getPayOutType() : PayOutType {
         1 -> PayOutType.MONTHLY
         3 -> PayOutType.QUARTERLY
         12 -> PayOutType.ANNUAL
-        else -> PayOutType.AT_MATURITY
-
+        else -> PayOutType.ANNUAL
     }
 
 
 }
-
+fun interestBasedOnPayoutType ( amt : Double , type : PayOutType ) : Double {
+    return when(type){
+        PayOutType.MONTHLY -> amt/12
+        PayOutType.QUARTERLY -> amt/4
+        PayOutType.ANNUAL -> amt
+    }
+}
 fun PayOutType.getPayOutFrequency() : Int{
     return when(this) {
         PayOutType.MONTHLY -> 1
         PayOutType.QUARTERLY -> 3
         PayOutType.ANNUAL -> 12
-        PayOutType.AT_MATURITY -> 0
     }
 }
 
