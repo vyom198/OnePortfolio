@@ -1,7 +1,11 @@
 package com.vs.oneportfolio.main.mapper
 
+import com.vs.oneportfolio.core.database.fixedincome.FixedIncomeEntity
+import com.vs.oneportfolio.core.database.fixedincome.history.MaturedFEntity
 import com.vs.oneportfolio.core.database.stocks.StocksEntity
 import com.vs.oneportfolio.core.gemini.StockTransaction
+import com.vs.oneportfolio.main.presentaion.fixedAssets.components.model.getPayOutFrequency
+import com.vs.oneportfolio.main.presentaion.model.FixedAssetUI
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -29,4 +33,31 @@ fun Double.toCommaString(
         maximumFractionDigits = maxDecimals
     }
     return formatter.format(this)
+}
+
+fun FixedAssetUI.toEntity (): FixedIncomeEntity{
+    return FixedIncomeEntity(
+        id = id,
+        depositName = depositName,
+        InstitutionName = InstitutionName,
+        amtPrincipal = amtPrincipal,
+        interestRatePercent = interestRatePercent,
+        currentValue = currentValue,
+        payoutFrequencyMonths = payoutFrequencyMonths.getPayOutFrequency(),
+        dateOpened = dateOpened,
+        dateMaturity = dateMaturity
+    )
+}
+
+fun FixedIncomeEntity.toMatured () : MaturedFEntity{
+    return MaturedFEntity(
+        id = id.toLong(),
+        depositName = depositName,
+        InstitutionName = InstitutionName,
+        amtPrincipal = amtPrincipal,
+        interestRatePercent = interestRatePercent,
+        currentValue = currentValue,
+        dateOpened = dateOpened,
+        dateMaturity = dateMaturity
+    )
 }

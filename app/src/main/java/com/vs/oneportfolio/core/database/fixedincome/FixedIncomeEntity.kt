@@ -8,32 +8,18 @@ data class FixedIncomeEntity(
     @PrimaryKey(autoGenerate = true) 
     val id: Int = 0,
 
-    // --- Identification ---
-    val depositName: String,             // e.g., "HDFC Tax Saver FD"
-    val InstitutionName: String ? = null,                // e.g., "Barclays", "SBI"
+    val depositName: String,
+    val InstitutionName: String ? = null,
 
-
-    // --- Financials ---
-    val amtPrincipal: Double,            // The original amount locked in
-    val interestRatePercent: Double,     // The nominal rate (e.g., 7.0)
+    val amtPrincipal: Double,
+    val interestRatePercent: Double,
     val currentValue : Double = amtPrincipal,
-    // --- The "FD Logic" Fields ---
-    /** * Payout Frequency in months. 
-     * 1 = Monthly, 3 = Quarterly, 12 = Annual, 0 = At Maturity 
-     */
-     val payoutFrequencyMonths: Int = 0,
-    
-    /** * If true, interest is added back to principal (Compounding).
-     * If false, interest is paid out to a bank account (Income).
-     */
+    val payoutFrequencyMonths: Int = 0,
     val isCumulative: Boolean = true,
+    val dateOpened: Long,
+    val dateMaturity: Long,
 
-    // --- Timing ---
-    val dateOpened: Long,                // Timestamp
-    val dateMaturity: Long,              // Timestamp
-    
-    // --- Josh's Alert System ---
-    val notifyOnMaturity: Boolean = true,
-    val notifyOnInterestCredit: Boolean = false, // Alert when a monthly payout hits
+    val notifyOnMaturity: Boolean = false,
+    val notifyOnInterestCredit: Boolean = false,
     val leadTimeDays: Int = 7
 )

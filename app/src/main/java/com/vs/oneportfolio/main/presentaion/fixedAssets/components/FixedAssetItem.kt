@@ -1,6 +1,7 @@
 package com.vs.oneportfolio.main.presentaion.fixedAssets.components
 
 import android.graphics.Color
+import androidx.appcompat.widget.DialogTitle
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CurrencyExchange
+import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.material3.Icon
@@ -29,6 +31,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
@@ -56,26 +60,37 @@ import com.vs.oneportfolio.core.theme.ui.small
 import com.vs.oneportfolio.main.mapper.formats
 import com.vs.oneportfolio.main.mapper.toCommaString
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.convertMillisToDate
+import com.vs.oneportfolio.main.presentaion.fixedAssets.components.model.PayOutType
 import com.vs.oneportfolio.main.presentaion.model.FixedAssetUI
 import com.vs.oneportfolio.main.presentaion.stocks.components.InvestedAmt
 import java.util.concurrent.TimeUnit
 
 
 @Composable
-fun FixedAssetItem(item: FixedAssetUI) {
+fun FixedAssetItem(item: FixedAssetUI
+                   ,onNotifyMaturity : (Boolean) -> Unit
+                   ,onNotifyPayment : (Boolean) -> Unit
+
+) {
     Column(
-      modifier = Modifier.fillMaxWidth().wrapContentSize().clip(
-          shape = RoundedCornerShape(12.dp)
-      ).background(
-          color = CardSurface
-      ).animateContentSize(
-          animationSpec = spring(
-              dampingRatio = 0.8f,
+      modifier = Modifier
+          .fillMaxWidth()
+          .wrapContentSize()
+          .clip(
+              shape = RoundedCornerShape(12.dp)
           )
-      ).padding(
-          horizontal = 16.dp,
-          vertical = 16.dp
-      )
+          .background(
+              color = CardSurface
+          )
+          .animateContentSize(
+              animationSpec = spring(
+                  dampingRatio = 0.8f,
+              )
+          )
+          .padding(
+              horizontal = 16.dp,
+              vertical = 16.dp
+          )
     ){
         var expanded by remember{ mutableStateOf(false) }
         var progress by remember { mutableStateOf(0f) }
@@ -93,9 +108,11 @@ fun FixedAssetItem(item: FixedAssetUI) {
             Icon(
                 painter = painterResource(if(expanded) R.drawable.arrow_up else R.drawable.arrow_down),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(32.dp).clickable{
-                    expanded = !expanded
-                },
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        expanded = !expanded
+                    },
                 contentDescription = null,
             )
 
@@ -119,7 +136,9 @@ fun FixedAssetItem(item: FixedAssetUI) {
         if(expanded){
             Spacer(modifier = Modifier.height(10.dp))
             BoxWithConstraints (
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 contentAlignment = Alignment.Center
             ){
                 maxWidth
@@ -157,7 +176,7 @@ fun FixedAssetItem(item: FixedAssetUI) {
                 Icon(
                     imageVector = Icons.Outlined.WatchLater,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = EmeraldGreen,
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
@@ -184,58 +203,92 @@ fun FixedAssetItem(item: FixedAssetUI) {
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Reminders" ,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.names,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight().clip(
-                    shape = RoundedCornerShape(12.dp)
-                ).padding(
-                    16.dp
-                ).background(
-                    color = MaterialTheme.colorScheme.background
-                ),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                var enabled by remember { mutableStateOf(false) }
-                Icon(
-                    imageVector = Icons.Filled.CurrencyExchange,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = SkyBlueAccent
-                )
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)  ,
-                    modifier = Modifier.fillMaxWidth(0.6f).wrapContentHeight()
-
-                ) {
-                    Text(
-                        text = "Maturity Alert" ,
-                        style = MaterialTheme.typography.names
-                    )
-                    Text(
-                        text = "Notify me 7 days before Maturity" ,
-                        style = MaterialTheme.typography.Values
-                    )
+            ReminderItem(
+                title = "Maturity Alert",
+                desc = "Notify me on maturity day",
+                icon =  Icons.Filled.CurrencyExchange ,
+                enabled = item.notifyOnMaturity,
+                onCheckedChange = {
+                    onNotifyMaturity(it)
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Switch(
-                    checked = enabled,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+                ReminderItem(
+                    title = "Payment Reminder",
+                    desc = "Notify me on payment day",
+                    icon =  Icons.Filled.Payment,
+                    enabled = item.notifyOnInterestCredit,
                     onCheckedChange = {
-                        enabled = it
+                        onNotifyPayment(it)
                     }
                 )
-
-             }
-
-
 
 
         }
 
 
 
+    }
+}
+
+@Composable
+fun ReminderItem(
+    title: String,
+    desc : String,
+    enabled : Boolean ,
+    icon : ImageVector,
+    onCheckedChange : (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().wrapContentHeight().clip(
+            shape = RoundedCornerShape(12.dp)
+        ).background(
+            color = MaterialTheme.colorScheme.background
+        ).padding(
+            12.dp
+        ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = EmeraldGreen
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(
+            verticalArrangement = Arrangement.spacedBy(6.dp)  ,
+            modifier = Modifier.fillMaxWidth(0.8f).wrapContentHeight()
+
+        ) {
+            Text(
+                text = title ,
+                style = MaterialTheme.typography.small
+            )
+//            Text(
+//                text = desc ,
+//                style = MaterialTheme.typography.small,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant
+//            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Switch(
+            checked = enabled,
+            onCheckedChange = {
+               onCheckedChange(it)
+            },
+            modifier = Modifier.size(16.dp),
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = CardSurface ,
+                checkedTrackColor = EmeraldGreen,
+                uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                uncheckedTrackColor = CardSurface
+            )
+        )
+        Spacer(modifier = Modifier.width(12.dp))
     }
 }

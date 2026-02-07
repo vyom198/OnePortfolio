@@ -155,7 +155,7 @@ fun HomeScreen(
                     )
                 )
                 Text(
-                    text = "Total Invested: $${state.totalInvested.toCommaString()}",
+                    text = "Total Invested: $${state.totalInvestedInAssets.toCommaString()}",
                     style = MaterialTheme.typography.normal.copy(
                         fontWeight = FontWeight.SemiBold ,
                         fontSize = 14.sp ,
