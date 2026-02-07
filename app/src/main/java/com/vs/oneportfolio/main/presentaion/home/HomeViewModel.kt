@@ -4,6 +4,7 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.lifecycle.viewModelScope
  import com.vs.oneportfolio.core.database.crypto.CryptoDao
  import com.vs.oneportfolio.core.database.fixedincome.FixedIcomeDao
+ import com.vs.oneportfolio.core.database.realestate.RealEstateDao
  import com.vs.oneportfolio.core.database.stocks.StockDao
  import kotlinx.coroutines.flow.MutableStateFlow
  import kotlinx.coroutines.flow.SharingStarted
@@ -17,7 +18,8 @@ package com.vs.oneportfolio.main.presentaion.home
 class HomeViewModel(
    private  val stockDao: StockDao,
     private val cryptoDao: CryptoDao,
-    private val fixedIcomeDao: FixedIcomeDao
+    private val fixedIcomeDao: FixedIcomeDao,
+    private  val realEstateDao: RealEstateDao
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -64,6 +66,17 @@ class HomeViewModel(
                         totalItemsinFA = count
                     )
                 }
+            }
+        }
+        viewModelScope.launch {
+            realEstateDao.getCount().collect {
+                count ->
+                _state.update {
+                    it.copy(
+                        totalItemsInRealEstate = count
+                    )
+                }
+
             }
         }
     }
@@ -127,6 +140,31 @@ class HomeViewModel(
                     )
                 }
             }
+        }
+        viewModelScope.launch {
+            realEstateDao.getTotalCurrentValue().collect {
+                 currentValue->
+                _state.update {
+                    it.copy(
+                        totalCurrentValueInRealEstate = currentValue
+                    )
+                }
+
+            }
+
+        }
+        viewModelScope.launch {
+            realEstateDao.getTotalInvested().collect {
+                totalInvested ->
+                _state.update {
+                    it.copy(
+                        totalInvestedInRealEstate = totalInvested
+                    )
+
+                }
+            }
+
+
         }
 
     }

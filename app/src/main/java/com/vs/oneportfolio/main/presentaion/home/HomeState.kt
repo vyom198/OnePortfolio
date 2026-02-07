@@ -11,12 +11,17 @@ data class HomeState(
   val totalInvestedInFA : Double = 0.0,
   val totalCurrentValueInFA : Double = 0.0,
   val totalItemsinFA : Int = 0,
+  val totalItemsInRealEstate : Int = 0,
+  val totalCurrentValueInRealEstate : Double = 0.0,
+  val totalInvestedInRealEstate : Double = 0.0,
+
+
 
 ) {
 
-  val totalInvestedInAssets = totalInvested + totalInvestedInCrypto + totalInvestedInFA
+  val totalInvestedInAssets = totalInvested + totalInvestedInCrypto + totalInvestedInFA + totalInvestedInRealEstate
 
-  val totalCurrentValueInAssets = totalCurrentValue + totalCurrentValueOfCrypto + totalCurrentValueInFA
+  val totalCurrentValueInAssets = totalCurrentValue + totalCurrentValueOfCrypto + totalCurrentValueInFA + totalCurrentValueInRealEstate
   val totalPnL: Double
     get() = totalCurrentValueInAssets - totalInvestedInAssets
 
@@ -60,6 +65,15 @@ data class HomeState(
 
   val assetsAbs
     get() = abs(totalGainOrLossInFA)
+
+  val totalGainOrLossInRealEstate
+    get() = totalCurrentValueInRealEstate - totalInvestedInRealEstate
+
+  val isRealEstatePositive : Boolean
+    get() = totalGainOrLossInRealEstate >=0
+
+  val realEstateAbs
+    get() = abs(totalGainOrLossInRealEstate)
 
 
 }

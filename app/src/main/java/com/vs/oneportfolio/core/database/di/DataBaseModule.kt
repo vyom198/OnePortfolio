@@ -11,7 +11,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
-val databaseModule = module{
+val databaseModule = module {
     single<PortfolioDatabase> {
         Room.databaseBuilder(
             androidApplication(),
@@ -19,10 +19,10 @@ val databaseModule = module{
             "portfolio_database"
         ).fallbackToDestructiveMigration(true).build()
     }
-   single {
-       get<PortfolioDatabase>().stockDao
+    single {
+        get<PortfolioDatabase>().stockDao
 
-   }
+    }
     single {
         get<PortfolioDatabase>().cryptoDao
 
@@ -37,7 +37,16 @@ val databaseModule = module{
 
     }
 
-   singleOf(::PortfolioAlarmScheduler) bind AlarmScheduler::class
+    single {
+        get<PortfolioDatabase>().realEstateDao
+
+    }
 
 
+    val alarmModule = module {
+
+        singleOf(::PortfolioAlarmScheduler) bind AlarmScheduler::class
+
+
+    }
 }
