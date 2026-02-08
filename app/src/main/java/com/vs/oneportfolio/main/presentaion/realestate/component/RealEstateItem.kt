@@ -125,7 +125,7 @@ fun RealEstateItem(item: RealEstateUI
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
-            InvestedAmt("Bought At: " , item.purchasePrice.toCommaString())
+            InvestedAmt("Bought At" , item.purchasePrice.toCommaString())
             InvestedAmt("Current Worth" , item.currentMarketValue.toCommaString())
 
         }

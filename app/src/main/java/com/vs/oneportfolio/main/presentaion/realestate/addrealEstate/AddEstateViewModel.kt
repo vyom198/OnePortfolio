@@ -58,6 +58,7 @@ class AddEstateViewModel(
             val item = RealEstateEntity(
                 propertyName = _state.value.propertyName,
                 address = _state.value.address,
+                currentMarketValue =  if(_state.value.purchasePrice.isEmpty())0.0 else _state.value.purchasePrice.toDouble(),
                 propertyType = _state.value.propertyType,
                 properImg = _state.value.properImg,
                 purchasePrice = if(_state.value.purchasePrice.isEmpty())0.0 else _state.value.purchasePrice.toDouble(),
@@ -96,7 +97,8 @@ class AddEstateViewModel(
                 realEstateDao.insertRealEstate(
                     item
                 )
-                alarmScheduler.scheduleYield(item)
+                val insertedItem = realEstateDao.getLastItem()
+                insertedItem?.let { alarmScheduler.scheduleYield(it) }
             }
 
             eventChannel.send(AddEstateEvent.onAddEvent)

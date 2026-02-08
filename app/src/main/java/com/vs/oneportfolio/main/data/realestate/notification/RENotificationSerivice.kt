@@ -103,13 +103,13 @@ class RENotificationSerivice(
         }
         val activityPendingIntent = PendingIntent.getBroadcast(
             context,
-            id.hashCode() +5,
+            id.hashCode() + 5,
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
         val activityPendingIntentNo = PendingIntent.getBroadcast(
             context,
-            id.hashCode()+6,
+            id.hashCode() + 6,
             intentNotConfirmed,
             PendingIntent.FLAG_IMMUTABLE
         )

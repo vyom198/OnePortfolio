@@ -28,7 +28,20 @@ class OnMortgageConfirmed : BroadcastReceiver() , KoinComponent {
                         val new =   item.copy(
                           mortgageBalance = item.mortgageBalance?.minus(item.mortgagePayment?:0.0)
                         )
-                        realStateDao.insertRealEstate(new)
+                        new.mortgageBalance?.let {
+                            if (it <= 0.0) {
+                               val nomortgage = new.copy(
+                                    hasMortgage = false,
+                                    mortgageBalance = 0.0,
+                                    mortgagePayment = 0.0 ,
+                                    mortgageReminder = false
+                                )
+                                realStateDao.insertRealEstate(nomortgage)
+                                alarmManager.cancelRepeatingMortgage(item )
+                            }else{
+                                realStateDao.insertRealEstate(new)
+                            }
+                        }
 
 
                     alarmManager.cancelRepeatingAfterNotificationRE(item)

@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import timber.log.Timber
 import kotlin.getValue
 
 class OnYieldReciever : BroadcastReceiver() , KoinComponent {
@@ -18,10 +19,10 @@ class OnYieldReciever : BroadcastReceiver() , KoinComponent {
     private val realEstateDao : RealEstateDao by inject()
     override fun onReceive(context: Context?, intent: Intent) {
         val name = intent.getStringExtra("name") ?: return
-        val id = intent.getIntExtra("id", -1) ?: return
+        val id = intent.getIntExtra("id", -1)
         val oldmoney = intent.getDoubleExtra("oldmoney", 0.0) ?: return
         val newmoney = intent.getDoubleExtra("newmoney", 0.0) ?: return
-
+        Timber.i(id.toString() + newmoney.toString())
         reNotification.showOnYield(
             id = id.toString(),
             name = name,
@@ -31,12 +32,7 @@ class OnYieldReciever : BroadcastReceiver() , KoinComponent {
         val pendingResult = goAsync()
         scope.launch {
             try {
-                val item = realEstateDao.getRealEstateById(id)?.copy(
-                    currentMarketValue = newmoney
-                )
-                item?.let { realEstateDao.insertRealEstate(it) }
-
-
+                realEstateDao.updateCurrebtBalance(id , newmoney)
             }finally {
                 pendingResult.finish()
             }

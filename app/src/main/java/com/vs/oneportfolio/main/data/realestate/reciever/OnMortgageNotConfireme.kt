@@ -17,14 +17,16 @@ class OnMortgageNotConfirmed : BroadcastReceiver() , KoinComponent {
     private val alarmManager : AlarmScheduler by inject()
     private val reNotification : RENotification by inject()
     private val scope : CoroutineScope by inject()
-    override fun onReceive(context: Context?, intent: Intent?) {
-        val id = intent?.getIntExtra("id" , 0) ?: return
+    override fun onReceive(context: Context?, intent: Intent) {
+        val id = intent.getIntExtra("id" , 0)
+        reNotification.cancelNotification(id.hashCode() + 5)
         val pendingResult = goAsync()
         scope.launch {
             try {
+
                 val item = realStateDao.getRealEstateById(id)
                 item?.let { alarmManager.scheduleRepeatingAfterNotificationRE(it) }
-                reNotification.cancelNotification(id.hashCode() + 6)
+
             } finally {
                 pendingResult.finish()
             }
