@@ -23,7 +23,8 @@ interface RealEstateDao {
 
     @Query("UPDATE realestate SET mortgageBalance = :mortgageBalance WHERE id = :id")
     suspend fun updateMortgageBalance(id: Int, mortgageBalance: Double)
-
+    @Query("UPDATE realestate SET currentMarketValue = :currentBalace WHERE id = :id")
+    suspend fun updateCurrebtBalance(id: Int, currentBalace: Double)
 
 
     @Query("SELECT SUM(currentMarketValue) FROM realestate")
@@ -44,6 +45,7 @@ interface RealEstateDao {
     @Query("UPDATE realestate SET mortgageReminder = :enabled WHERE id = :id")
     suspend fun updateMortgageNotify(id: Int, enabled: Boolean)
 
-
+    @Query("SELECT * FROM realestate ORDER BY id DESC LIMIT 1")
+    suspend fun getLastItem(): RealEstateEntity?
 
 }

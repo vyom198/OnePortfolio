@@ -15,7 +15,7 @@ data class RealEstateEntity(
     // Financials
     val purchasePrice: Double,
     val yieldRate : Double = 0.0,
-    val currentMarketValue: Double = purchasePrice,
+    val currentMarketValue: Double = 0.0,
     val purchaseDate: Long,
 
     // Revenue & Expenses

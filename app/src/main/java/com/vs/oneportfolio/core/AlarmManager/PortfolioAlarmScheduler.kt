@@ -150,8 +150,8 @@ class PortfolioAlarmScheduler(
         val triggerTime = item.taxDueDate - (7* 24 * 60 * 60 * 1000L)
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
-            triggerTime,
-            intervalMs,
+            System.currentTimeMillis(),
+             1000L,
             pendingIntent
         )
     }
@@ -184,8 +184,8 @@ class PortfolioAlarmScheduler(
         val triggerTime = item.purchaseDate + intervalMs
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
-            triggerTime,
-            intervalMs,
+            System.currentTimeMillis(),
+             1000L,
             pendingIntent
         )
     }
@@ -222,8 +222,8 @@ class PortfolioAlarmScheduler(
         val triggerTime = item.purchaseDate + intervalMs
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
-            triggerTime,
-            intervalMs,
+            System.currentTimeMillis(),
+             1000L,
             pendingIntent
         )
     }
@@ -256,7 +256,7 @@ class PortfolioAlarmScheduler(
         val triggertime =  System.currentTimeMillis() + 24 * 60 * 60 * 1000L
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            triggertime,
+            System.currentTimeMillis(),
             pendingIntent
         )
     }
@@ -290,8 +290,8 @@ class PortfolioAlarmScheduler(
         val triggertime = item.purchaseDate + intervalMs
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
-            triggertime,
-                       intervalMs,
+            System.currentTimeMillis(),
+            1000L,
             pendingIntent
         )
     }

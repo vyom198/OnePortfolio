@@ -132,10 +132,13 @@ fun RealScreen(
                     items(state.realestates) { item ->
                         RealEstateItem(item,
                             onNotifyRent = {
+                                onAction(RealAction.onNotifyRental(it , item))
                             },
                             onNotifyMortgage = {
+                                onAction(RealAction.onNotifyMortgage(it , item))
                             },
                             onNotifyTax = {
+                                onAction(RealAction.onNotifyTax(it , item))
 
                             },
                             onEditClick = {
