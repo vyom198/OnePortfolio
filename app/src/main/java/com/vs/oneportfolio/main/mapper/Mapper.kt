@@ -1,5 +1,6 @@
 package com.vs.oneportfolio.main.mapper
 
+import android.os.Build
 import com.vs.oneportfolio.core.database.fixedincome.FixedIncomeEntity
 import com.vs.oneportfolio.core.database.fixedincome.history.MaturedFEntity
 import com.vs.oneportfolio.core.database.stocks.StocksEntity
@@ -7,7 +8,13 @@ import com.vs.oneportfolio.core.gemini.StockTransaction
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.model.getPayOutFrequency
 import com.vs.oneportfolio.main.presentaion.model.FixedAssetUI
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
+import kotlin.time.Instant
 
 //fun StockTransaction.toEntity () : StocksEntity{
 //    return StocksEntity(
@@ -34,7 +41,19 @@ fun Double.toCommaString(
     }
     return formatter.format(this)
 }
+fun formatLongToDate(timestamp: Long): String {
+    // 1. Define the pattern (e.g., 15 Feb)
+    val pattern = "dd MMM"
 
+    // 2. Initialize SimpleDateFormat with a fixed Locale to avoid translation issues
+    val sdf = SimpleDateFormat(pattern, Locale.ENGLISH)
+
+    // 3. (Optional) Set to system default or UTC depending on your needs
+    sdf.timeZone = TimeZone.getDefault()
+
+    // 4. Convert Long to Date and format
+    return sdf.format(Date(timestamp)).lowercase()
+}
 fun FixedAssetUI.toEntity (): FixedIncomeEntity{
     return FixedIncomeEntity(
         id = id,

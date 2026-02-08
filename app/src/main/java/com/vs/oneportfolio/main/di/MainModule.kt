@@ -2,7 +2,9 @@ package com.vs.oneportfolio.main.di
 
 import com.vs.oneportfolio.core.gemini.StockRepository
 import com.vs.oneportfolio.main.data.fixedAsset.notification.FANotificationService
+import com.vs.oneportfolio.main.data.realestate.notification.RENotificationSerivice
 import com.vs.oneportfolio.main.domain.fixedAsset.notification.FANotification
+import com.vs.oneportfolio.main.domain.realestate.notification.RENotification
 import com.vs.oneportfolio.main.presentaion.crypto.CryptoViewModel
 import com.vs.oneportfolio.main.presentaion.fixedAssets.FixedAssetsViewModel
 import com.vs.oneportfolio.main.presentaion.home.HomeViewModel
@@ -26,6 +28,7 @@ val mainModule = module {
     viewModelOf(::RealViewModel)
     viewModelOf(::AddEstateViewModel)
     singleOf(::FANotificationService) bind FANotification::class
+    singleOf(::RENotificationSerivice) bind RENotification::class
 
 
     single {

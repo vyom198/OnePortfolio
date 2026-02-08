@@ -42,6 +42,30 @@
             android:enabled="true"
             android:exported="false"
             />
+        <receiver android:name=".main.data.realestate.reciever.OnMortgageConfirmed"
+            android:enabled="true"
+            android:exported="false"
+            />
+        <receiver android:name=".main.data.realestate.reciever.OnMortgageNotConfirmed"
+            android:enabled="true"
+            android:exported="false"
+            />
+        <receiver android:name=".main.data.realestate.reciever.OnMortgageReciever"
+            android:enabled="true"
+            android:exported="false"
+            />
+        <receiver android:name=".main.data.realestate.reciever.OnRentReciever"
+            android:enabled="true"
+            android:exported="false"
+            />
+        <receiver android:name=".main.data.realestate.reciever.OnTaxReciever"
+            android:enabled="true"
+            android:exported="false"
+            />
+        <receiver  android:name=".main.data.realestate.reciever.OnYieldReciever"
+            android:enabled="true"
+            android:exported="false"
+            />
     </application>
 
 </manifest>

@@ -1,6 +1,8 @@
 package com.vs.oneportfolio.main.presentaion.realestate.addrealEstate
 
-import android.graphics.Color
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -21,7 +23,6 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,31 +32,35 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.vs.oneportfolio.R
 import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
-import com.vs.oneportfolio.core.theme.ui.label
 import com.vs.oneportfolio.core.theme.ui.names
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.AddAssetTextField
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.DatePickerFieldToModal
 import com.vs.oneportfolio.main.presentaion.model.ObserveAsEvents
-import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.component.AddEstateEvent
-import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.component.RealTextField
+import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateEvent
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -64,19 +69,37 @@ fun AddEstateRoot(
     onBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+           viewModel.onAction(AddEstateAction.onUriGet(uri))
+        } else {
+
+        }
+    }
     ObserveAsEvents(
         flow = viewModel.events,
-    ) {
-        when(viewModel.events){
-            AddEstateEvent.onAddEvent -> {
+    ) { event ->
+        when(event){
+            is AddEstateEvent.onAddEvent -> {
                 onBack()
+            }
+             is AddEstateEvent.LaunchPicker -> {
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
+             is AddEstateEvent.Saved -> {
+                scope.launch {
+                    snackbarHostState.showSnackbar("picture updated successfully")
+                }
             }
         }
     }
     AddEstateScreen(
         state = state,
         onAction = viewModel::onAction,
-        onBack = onBack
+        onBack = onBack,
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -85,7 +108,8 @@ fun AddEstateRoot(
 fun AddEstateScreen(
     state: AddEstateState,
     onAction: (AddEstateAction) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
         modifier = Modifier
@@ -96,7 +120,9 @@ fun AddEstateScreen(
             .padding(
                 horizontal = 16.dp
             ).imePadding(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
+
             TopAppBar(
                 navigationIcon = {
                     Icon(
@@ -131,54 +157,55 @@ fun AddEstateScreen(
         ) {
             Box(
                 modifier = Modifier
-                    .size(136.dp)
+                    .fillMaxWidth().height(200.dp)
                     .clip(
                         shape = RoundedCornerShape(12.dp)
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = Color(0xffC0CAD6),
+                    ).border(
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = SkyBlueAccent,
+                        ) ,
                         shape = RoundedCornerShape(12.dp)
+
+                    ).padding(4.dp
                     ),
+
                 contentAlignment = Alignment.Center
             ){
 
                 AsyncImage(
-                    model = state,
+                    model = state.properImg,
                     contentDescription = null,
-                    fallback = painterResource(R.drawable.profile),
-                    modifier = Modifier
-                        .size(120.dp)
+                    fallback = painterResource(R.drawable.img_1),
+                    modifier = Modifier.fillMaxSize()
                         .clip(
                             shape = RoundedCornerShape(12.dp)
 
-                        ),
+                        ).padding(2.dp) ,
+
                     contentScale = ContentScale.FillBounds
 
                 )
 
             }
             Spacer(modifier = Modifier.height(12.dp))
-            OutlinedButton(
-                onClick = { },
+            Button(
+                onClick = {
+                    onAction(AddEstateAction.onChangeAvtar)
+                },
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = SkyBlueAccent),
                 modifier = Modifier
-                    .height(44.dp),
-                shape = RoundedCornerShape(100),
-                border = BorderStroke(
-                    width = 1.dp ,
-                    color = Color(0xffC0CAD6)
-                )
+                    .height(44.dp).align(
+                        Alignment.CenterHorizontally
+                    ),
+                shape = RoundedCornerShape(12.dp),
 
             ) {
                 Text(
-                    text = "Change Avatar",
+                    text = "Change",
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.movieTitle.copy(
-                        color = Color(0xff344054),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp
-                    )
+                    style = MaterialTheme.typography.names
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
