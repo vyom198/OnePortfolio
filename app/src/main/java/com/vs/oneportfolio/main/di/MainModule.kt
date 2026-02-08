@@ -7,6 +7,7 @@ import com.vs.oneportfolio.main.presentaion.crypto.CryptoViewModel
 import com.vs.oneportfolio.main.presentaion.fixedAssets.FixedAssetsViewModel
 import com.vs.oneportfolio.main.presentaion.home.HomeViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.RealViewModel
+import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateViewModel
 import com.vs.oneportfolio.main.presentaion.stocks.StockViewModel
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.singleOf
@@ -23,7 +24,7 @@ val mainModule = module {
     viewModelOf(::CryptoViewModel)
     viewModelOf(::FixedAssetsViewModel)
     viewModelOf(::RealViewModel)
-
+    viewModelOf(::AddEstateViewModel)
     singleOf(::FANotificationService) bind FANotification::class
 
 

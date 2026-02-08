@@ -59,6 +59,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -465,7 +466,6 @@ fun DatePickerFieldToModal(
 
 ) {
     var showModal by remember { mutableStateOf(false) }
-
     OutlinedTextField(
         value = selectedDate?.let { convertMillisToDate(it) } ?: "",
         onValueChange = { },
@@ -479,10 +479,14 @@ fun DatePickerFieldToModal(
         placeholder = {
             Text(
                 text = "MM/DD/YYYY",
-                style = MaterialTheme.typography.names,
+                style = MaterialTheme.typography.label,
                 color = MaterialTheme.colorScheme.onPrimary
             )
         },
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Next
+        ),
+
         trailingIcon = {
             Icon(
                 Icons.Default.DateRange, contentDescription = "Select date",

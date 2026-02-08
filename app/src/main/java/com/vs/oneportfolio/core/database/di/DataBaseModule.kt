@@ -43,10 +43,8 @@ val databaseModule = module {
     }
 
 
-    val alarmModule = module {
-
-        singleOf(::PortfolioAlarmScheduler) bind AlarmScheduler::class
+    singleOf(::PortfolioAlarmScheduler) bind AlarmScheduler::class
 
 
-    }
+
 }
