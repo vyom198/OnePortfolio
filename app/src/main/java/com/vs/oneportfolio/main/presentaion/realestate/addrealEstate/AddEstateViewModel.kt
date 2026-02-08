@@ -1,13 +1,16 @@
 package com.vs.oneportfolio.main.presentaion.realestate.addrealEstate
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.vs.oneportfolio.app.navigation.AppRoute
+import com.vs.oneportfolio.core.AlarmManager.AlarmScheduler
 import com.vs.oneportfolio.core.database.realestate.RealEstateDao
 import com.vs.oneportfolio.core.database.realestate.RealEstateEntity
-import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.component.AddEstateEvent
+import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateEvent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,10 +19,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 
 class AddEstateViewModel(
     private val savedStateHandle: SavedStateHandle,
-    private val realEstateDao: RealEstateDao
+    private val realEstateDao: RealEstateDao,
+    private val context: Context,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -53,19 +60,45 @@ class AddEstateViewModel(
                 address = _state.value.address,
                 propertyType = _state.value.propertyType,
                 properImg = _state.value.properImg,
-                purchasePrice = _state.value.purchasePrice.toDouble(),
-                yieldRate = _state.value.yieldRate.toDouble(),
-                monthlyRent = _state.value.monthlyRent.toDouble(),
+                purchasePrice = if(_state.value.purchasePrice.isEmpty())0.0 else _state.value.purchasePrice.toDouble(),
+                yieldRate = if(_state.value.yieldRate.isEmpty())0.0 else _state.value.yieldRate.toDouble(),
+                monthlyRent = if(_state.value.monthlyRent.isEmpty())0.0 else  _state.value.monthlyRent.toDouble(),
                 isRented = _state.value.isRented,
                 hasMortgage = _state.value.hasMortgage,
-                mortgageBalance = _state.value.mortgageBalance.toDouble(),
-                mortgagePayment = _state.value.mortgagePayment.toDouble(),
+                mortgageBalance = if(_state.value.mortgageBalance.isEmpty())0.0 else _state.value.mortgageBalance.toDouble(),
+                mortgagePayment = if(_state.value.mortgagePayment.isEmpty())0.0 else _state.value.mortgagePayment.toDouble(),
                 taxDueDate = _state.value.taxDueDate ?: 0L ,
                 purchaseDate = _state.value.purchaseDate ?: 0L ,
             )
-            realEstateDao.insertRealEstate(
-                item
-            )
+            if(screenTitle == _state.value.propertyName){
+                val item = realEstateDao.getRealEstateById(id)
+               val newitem = realEstateDao.getRealEstateById(id)?.copy(
+                   propertyName = _state.value.propertyName,
+                   address = _state.value.address,
+                   propertyType = _state.value.propertyType,
+                   properImg = _state.value.properImg,
+                   purchasePrice = if(_state.value.purchasePrice.isEmpty())0.0 else _state.value.purchasePrice.toDouble(),
+                   yieldRate = if(_state.value.yieldRate.isEmpty())0.0 else _state.value.yieldRate.toDouble(),
+                   monthlyRent = if(_state.value.monthlyRent.isEmpty())0.0 else  _state.value.monthlyRent.toDouble(),
+                   isRented = _state.value.isRented,
+                   hasMortgage = _state.value.hasMortgage,
+                   mortgageBalance = if(_state.value.mortgageBalance.isEmpty())0.0 else _state.value.mortgageBalance.toDouble(),
+                   mortgagePayment = if(_state.value.mortgagePayment.isEmpty())0.0 else _state.value.mortgagePayment.toDouble(),
+                   taxDueDate = _state.value.taxDueDate ?: 0L ,
+                   purchaseDate = _state.value.purchaseDate ?: 0L ,
+               )
+                if(item != null){
+                    alarmScheduler.cancelYield(item)
+                    newitem?.let { realEstateDao.insertRealEstate(it) }
+                    newitem?.let { alarmScheduler.scheduleYield(it) }
+                }
+            }else{
+                realEstateDao.insertRealEstate(
+                    item
+                )
+                alarmScheduler.scheduleYield(item)
+            }
+
             eventChannel.send(AddEstateEvent.onAddEvent)
         }
     }
@@ -161,7 +194,56 @@ class AddEstateViewModel(
                 }
 
             }
+
+            AddEstateAction.onChangeAvtar -> {
+                viewModelScope.launch {
+                    eventChannel.send(AddEstateEvent.LaunchPicker)
+                }
+            }
+            is AddEstateAction.onUriGet -> {
+                viewModelScope.launch {
+                    val oldPath = _state.value.properImg
+                    deleteOldFile(oldPath)
+                    val path = saveUriToFile(context, action.uri)
+                    _state.update {
+                        it.copy(
+                            properImg = path
+                        )
+
+                    }
+                }
+
+            }
         }
     }
+    private fun deleteOldFile(path: String?) {
+        if (path.isNullOrEmpty()) return
+        try {
+            val file = File(path)
+            if (file.exists()) {
+                file.delete()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    private fun saveUriToFile(context: Context, uri: Uri): String? {
+        val contentResolver = context.contentResolver
+        // Create a unique filename using a timestamp or UUID
+        val fileName = "estate_${System.currentTimeMillis()}.jpg"
+        val file = File(context.filesDir, fileName)
 
+        return try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                FileOutputStream(file).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+            file.absolutePath // This is what you store in the DB
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 }
+

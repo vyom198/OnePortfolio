@@ -23,9 +23,6 @@ class FixedAssetReciever : BroadcastReceiver(), KoinComponent {
         val id = intent?.getStringExtra("id") ?: return
         val name = intent.getStringExtra("name") ?: return
         val money = intent.getStringExtra("money") ?: return
-        Timber.i(
-            "id : $id , name : $name , money : $money"
-        )
         faNotification.showMaturedNotification(
             id = id,
             name = name,
@@ -43,8 +40,6 @@ class FixedAssetReciever : BroadcastReceiver(), KoinComponent {
                     fixedIncomedao.deleteFixedIncomeById(id.toInt())
                 }
 
-                // 3. Show notification AFTER DB work is done
-                faNotification.showMaturedNotification(id, name, money)
             } finally {
                 pendingResult.finish()
             }

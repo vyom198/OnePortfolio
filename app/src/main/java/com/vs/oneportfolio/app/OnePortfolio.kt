@@ -17,6 +17,7 @@ import com.vs.oneportfolio.core.finnhubNetwork.util.Result
 import com.vs.oneportfolio.core.gemini.geminiModule
 import com.vs.oneportfolio.core.socket.socketModule
 import com.vs.oneportfolio.main.data.fixedAsset.notification.FANotificationService
+import com.vs.oneportfolio.main.data.realestate.notification.RENotificationSerivice
 import com.vs.oneportfolio.main.di.mainModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,7 +59,21 @@ class OnePortfolio : Application() {
         startPriceSync()
         startCrptoPriceSync()
         createNotificationChannel()
+        createNotificationChannelForRE()
+    }
 
+    private fun createNotificationChannelForRE() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                RENotificationSerivice.RE_CHANNEL_ID,
+                RENotificationSerivice.RE_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            channel.description = "Used for Alerting about real estates"
+
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     private fun createNotificationChannel() {

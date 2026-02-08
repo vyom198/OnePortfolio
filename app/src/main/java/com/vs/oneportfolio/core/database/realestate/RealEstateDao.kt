@@ -16,7 +16,7 @@ interface RealEstateDao {
     suspend fun getRealEstateById(id: Int): RealEstateEntity?
 
     @Query("SELECT * FROM realestate")
-    suspend fun getAllRealEstates(): List<RealEstateEntity>
+     fun getAllRealEstates(): Flow<List<RealEstateEntity>>
 
     @Query("DELETE FROM realestate WHERE id = :id")
     suspend fun deleteRealEstateById(id: Int)
@@ -24,8 +24,6 @@ interface RealEstateDao {
     @Query("UPDATE realestate SET mortgageBalance = :mortgageBalance WHERE id = :id")
     suspend fun updateMortgageBalance(id: Int, mortgageBalance: Double)
 
-    @Update
-    suspend fun updateRealEstate(realEstate: RealEstateEntity)
 
 
     @Query("SELECT SUM(currentMarketValue) FROM realestate")
@@ -37,10 +35,14 @@ interface RealEstateDao {
     @Query("SELECT COUNT(*) FROM realestate ")
     fun getCount(): Flow<Int>
 
+    @Query("UPDATE realestate SET rentReminder = :enabled WHERE id = :id")
+    suspend fun updateRentNotify(id: Int, enabled: Boolean)
 
+    @Query("UPDATE realestate SET taxReminder = :enabled WHERE id = :id")
+    suspend fun updateTaxNotify(id: Int, enabled: Boolean)
 
-
-
+    @Query("UPDATE realestate SET mortgageReminder = :enabled WHERE id = :id")
+    suspend fun updateMortgageNotify(id: Int, enabled: Boolean)
 
 
 

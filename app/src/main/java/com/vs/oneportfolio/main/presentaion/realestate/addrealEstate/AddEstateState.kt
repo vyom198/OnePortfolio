@@ -15,7 +15,7 @@ data class AddEstateState(
    val hasMortgage: Boolean = false,
    val mortgageBalance: String = "" ,
    val mortgagePayment :String = "" ,
-   val taxDueDate: Long? = null
+   val taxDueDate: Long? = null ,
    )
 
 enum class EstateField {

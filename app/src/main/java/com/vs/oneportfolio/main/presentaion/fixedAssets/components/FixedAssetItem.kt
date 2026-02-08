@@ -209,7 +209,6 @@ fun FixedAssetItem(item: FixedAssetUI
             Spacer(modifier = Modifier.height(10.dp))
             ReminderItem(
                 title = "Maturity Alert",
-                desc = "Notify me on maturity day",
                 icon =  Icons.Filled.CurrencyExchange ,
                 enabled = item.notifyOnMaturity,
                 onCheckedChange = {
@@ -219,7 +218,6 @@ fun FixedAssetItem(item: FixedAssetUI
             Spacer(modifier = Modifier.height(6.dp))
                 ReminderItem(
                     title = "Payment Reminder",
-                    desc = "Notify me on payment day",
                     icon =  Icons.Filled.Payment,
                     enabled = item.notifyOnInterestCredit,
                     onCheckedChange = {
@@ -238,7 +236,7 @@ fun FixedAssetItem(item: FixedAssetUI
 @Composable
 fun ReminderItem(
     title: String,
-    desc : String,
+    desc : String? = null,
     enabled : Boolean ,
     icon : ImageVector,
     onCheckedChange : (Boolean) -> Unit
@@ -269,11 +267,14 @@ fun ReminderItem(
                 text = title ,
                 style = MaterialTheme.typography.small
             )
-//            Text(
-//                text = desc ,
-//                style = MaterialTheme.typography.small,
-//                color = MaterialTheme.colorScheme.onSurfaceVariant
-//            )
+            if(!desc.isNullOrEmpty()){
+                Text(
+                    text = desc  ,
+                    style = MaterialTheme.typography.small,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
         }
         Spacer(modifier = Modifier.weight(1f))
         Switch(

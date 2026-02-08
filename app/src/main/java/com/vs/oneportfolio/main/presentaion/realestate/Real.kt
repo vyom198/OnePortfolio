@@ -31,6 +31,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
 import com.vs.oneportfolio.main.presentaion.fixedAssets.FixedAssetsAction
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.FixedAssetItem
+import com.vs.oneportfolio.main.presentaion.model.RealEstateUI
+import com.vs.oneportfolio.main.presentaion.realestate.component.RealEstateItem
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -128,13 +130,26 @@ fun RealScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(state.realestates) { item ->
+                        RealEstateItem(item,
+                            onNotifyRent = {
+                            },
+                            onNotifyMortgage = {
+                            },
+                            onNotifyTax = {
 
+                            },
+                            onEditClick = {
+                                onEditClick(item.propertyName, it)
+                            }
+                        )
                     }
                 }
             }
         }
     }
 }
+
+
 
 //@Preview
 //@Composable
