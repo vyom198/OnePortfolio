@@ -1,29 +1,61 @@
 package com.vs.oneportfolio.main.presentaion.realestate.addrealEstate
 
+import android.graphics.Color
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
+import com.vs.oneportfolio.R
+import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
+import com.vs.oneportfolio.core.theme.ui.label
+import com.vs.oneportfolio.core.theme.ui.names
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
+import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.AddAssetTextField
+import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.DatePickerFieldToModal
+import com.vs.oneportfolio.main.presentaion.model.ObserveAsEvents
+import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.component.AddEstateEvent
+import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.component.RealTextField
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -32,7 +64,15 @@ fun AddEstateRoot(
     onBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
+    ObserveAsEvents(
+        flow = viewModel.events,
+    ) {
+        when(viewModel.events){
+            AddEstateEvent.onAddEvent -> {
+                onBack()
+            }
+        }
+    }
     AddEstateScreen(
         state = state,
         onAction = viewModel::onAction,
@@ -55,7 +95,7 @@ fun AddEstateScreen(
             )
             .padding(
                 horizontal = 16.dp
-            ),
+            ).imePadding(),
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -73,20 +113,6 @@ fun AddEstateScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 ),
-                actions = {
-
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-
-                            },
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-
-                },
                 title = {
                     Text(state.screenTitle,
                         style = MaterialTheme.typography.topBarTitle)
@@ -99,8 +125,296 @@ fun AddEstateScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(paddingValues).verticalScroll(
+                    state = androidx.compose.foundation.rememberScrollState()
+                ).animateContentSize(),
         ) {
+            Box(
+                modifier = Modifier
+                    .size(136.dp)
+                    .clip(
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color(0xffC0CAD6),
+                        shape = RoundedCornerShape(12.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ){
+
+                AsyncImage(
+                    model = state,
+                    contentDescription = null,
+                    fallback = painterResource(R.drawable.profile),
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(
+                            shape = RoundedCornerShape(12.dp)
+
+                        ),
+                    contentScale = ContentScale.FillBounds
+
+                )
+
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = { },
+                modifier = Modifier
+                    .height(44.dp),
+                shape = RoundedCornerShape(100),
+                border = BorderStroke(
+                    width = 1.dp ,
+                    color = Color(0xffC0CAD6)
+                )
+
+            ) {
+                Text(
+                    text = "Change Avatar",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.movieTitle.copy(
+                        color = Color(0xff344054),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+               AddAssetTextField(
+                onTextChange = {
+                   onAction(AddEstateAction.OnFieldUpdate(EstateField.NAME,it))
+                },
+                onClear = {
+                    onAction(AddEstateAction.OnFieldCancel(EstateField.NAME))
+                },
+                text = state.propertyName,
+                hint = "e.g. Reliance Housing", label = "name"
+
+              )
+            Spacer(modifier = Modifier.height(10.dp))
+            AddAssetTextField(
+                onTextChange = {
+                    onAction(AddEstateAction.OnFieldUpdate(EstateField.TYPE,it))
+                },
+                onClear = {
+                    onAction(AddEstateAction.OnFieldCancel(EstateField.TYPE))
+
+                },
+
+                text = state.propertyType,
+                hint = "e.g. Shop" ,
+                label = "type"
+
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+            AddAssetTextField(
+                onTextChange = {
+                    onAction(AddEstateAction.OnFieldUpdate(EstateField.PRICE,it))
+                },
+                isNumber = true,
+                onClear = {
+                    onAction(AddEstateAction.OnFieldCancel(EstateField.PRICE))
+                },
+                text = state.purchasePrice,
+                hint = "e.g. $76,000 ",
+                label = "price"
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            AddAssetTextField(
+                onTextChange = {
+                    onAction(AddEstateAction.OnFieldUpdate(EstateField.YIELD,it))
+                },
+                isNumber = true,
+                onClear = {
+                    onAction(AddEstateAction.OnFieldCancel(EstateField.YIELD))
+                },
+                text = state.yieldRate,
+                hint = "e.g. 7.6 %",
+                label = "yield"
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            DatePickerFieldToModal(
+                selectedDate =  state.purchaseDate ,
+                label = "purchase date",
+                onSelectDate = {
+                 onAction(AddEstateAction.onPurchaseDateChange(it))
+                }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            AddAssetTextField(
+                onTextChange = {
+                    onAction(AddEstateAction.OnFieldUpdate(EstateField.ADDRESS,it))
+                },
+                onClear = {
+                    onAction(AddEstateAction.OnFieldCancel(EstateField.ADDRESS))
+                },
+                text = state.address,
+                hint = "e.g. London 12 street near hotel",
+                label = "Address"
+
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
+                    .clip(
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                    ).border(
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = SkyBlueAccent
+                        ) ,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 14.dp)
+                    .selectableGroup()
+            ) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(36.dp)
+                            .selectable(
+                                selected = state.isRented,
+                                onClick = {
+                                    onAction(AddEstateAction.onRentedChange(state.isRented))
+                                },
+                                role = Role.RadioButton
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Spacer(modifier = Modifier.height(5.dp))
+                        RadioButton(
+                            colors = RadioButtonColors(
+                                unselectedColor = MaterialTheme.colorScheme.onPrimary,
+                                selectedColor = SkyBlueAccent,
+                                disabledSelectedColor = MaterialTheme.colorScheme.background,
+                                disabledUnselectedColor = MaterialTheme.colorScheme.background,
+                            ),
+                            selected = state.isRented,
+                            onClick = null,
+
+                            )
+                        Text(
+                            text = "Rented",
+                            style = MaterialTheme.typography.names,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
+                    }
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(36.dp)
+                        .selectable(
+                            selected = state.hasMortgage,
+                            onClick = {
+                                onAction(AddEstateAction.onMortgageChange(state.hasMortgage))
+                            },
+                            role = Role.RadioButton
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.height(5.dp))
+                    RadioButton(
+                        colors = RadioButtonColors(
+                            unselectedColor = MaterialTheme.colorScheme.onPrimary,
+                            selectedColor = SkyBlueAccent,
+                            disabledSelectedColor = MaterialTheme.colorScheme.background,
+                            disabledUnselectedColor = MaterialTheme.colorScheme.background,
+                        ),
+                        selected = state.hasMortgage,
+                        onClick = null,
+
+                        )
+                    Text(
+                        text = "Mortgaged",
+                        style = MaterialTheme.typography.names,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(start = 10.dp)
+                    )
+                }
+
+
+
+            }
+            if(state.isRented){
+                Spacer(modifier = Modifier.height(10.dp))
+                AddAssetTextField(
+                    onTextChange = {
+                        onAction(AddEstateAction.OnFieldUpdate(EstateField.RENT,it))
+                    },
+                    isNumber = true,
+                    onClear = {
+                        onAction(AddEstateAction.OnFieldCancel(EstateField.RENT))
+                    },
+                    text = state.monthlyRent,
+                    hint = "e.g. $1200",
+                    label = "Rent"
+
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+            if(state.hasMortgage){
+                AddAssetTextField(
+                    onTextChange = {
+                        onAction(AddEstateAction.OnFieldUpdate(EstateField.MORTGAGE_BAL,it))
+                    },
+                    isNumber = true,
+                    onClear = {
+                        onAction(AddEstateAction.OnFieldCancel(EstateField.MORTGAGE_BAL))
+                    },
+                    text = state.mortgageBalance,
+                    hint = "e.g. $100,000",
+                    label = "Mortgage Balance"
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                AddAssetTextField(
+                    onTextChange = {
+                        onAction(AddEstateAction.OnFieldUpdate(EstateField.MORTGAGE_PAY,it))
+                    },
+                    isNumber = true,
+                    onClear = {
+                        onAction(AddEstateAction.OnFieldCancel(EstateField.MORTGAGE_PAY))
+                    },
+                    text = state.mortgagePayment,
+                    hint = "e.g. $10,000",
+                    label = "Mortgage Payment"
+                )
+
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            DatePickerFieldToModal(
+                selectedDate =  state.taxDueDate ,
+                label = "Tax Due Date",
+                onSelectDate = {
+                    onAction(AddEstateAction.onTaxDateChange(it))
+                }
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                enabled = state.purchaseDate != null,
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = SkyBlueAccent
+                ),
+                onClick = {
+                    onAction(AddEstateAction.OnSave)
+                }
+            ) {
+                Text(text = if(state.screenTitle == "Add Your Real Estate")"Add to Assets" else "Edit" ,
+                    style = MaterialTheme.typography.names,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
 
 
 

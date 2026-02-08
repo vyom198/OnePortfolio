@@ -94,7 +94,7 @@ fun RealScreen(
                         modifier = Modifier
                             .size(24.dp)
                             .clickable {
-
+                                onAddClick("Add Your Real Estate")
                             },
                         tint = MaterialTheme.colorScheme.onPrimary
                     )

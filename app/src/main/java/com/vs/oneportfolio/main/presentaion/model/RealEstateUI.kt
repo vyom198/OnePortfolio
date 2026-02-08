@@ -2,14 +2,13 @@ package com.vs.oneportfolio.main.presentaion.model
 
 data class RealEstateUI(
     val id: Int = 0,
-
-    val propertyName: String,
-    val address: String?= null,
-    val propertyType: String,
+    val propertyName: String = "",
+    val address: String = "",
+    val propertyType: String = "",
     val properImg : String? = null ,
     // Financials
-    val purchasePrice: Double,
-    val yieldRate : Double = 0.0,
+    val purchasePrice: Double = 0.0,
+    val yieldRate : Double ,
     val currentMarketValue: Double = purchasePrice,
     val purchaseDate: Long,
 
