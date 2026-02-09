@@ -52,7 +52,8 @@ fun HomeRoot(
     onNavigateToStock: () -> Unit ,
     onNavigateToCrypto : () -> Unit ,
     onNavigateToFA : () -> Unit,
-    onNavigateToRealEstate : () -> Unit
+    onNavigateToRealEstate : () -> Unit,
+    onNavigateToMetal : () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     
@@ -62,7 +63,8 @@ fun HomeRoot(
         onNavigateToStock = onNavigateToStock ,
         onNavigateToCrypto = onNavigateToCrypto,
         onNavigateToFA = onNavigateToFA,
-        onNavigateToRealEstate = onNavigateToRealEstate
+        onNavigateToRealEstate = onNavigateToRealEstate,
+        onNavigateToMetal = onNavigateToMetal
     )
 }
 
@@ -74,7 +76,8 @@ fun HomeScreen(
     onNavigateToStock : () -> Unit,
     onNavigateToFA : () -> Unit ,
     onNavigateToCrypto : () -> Unit,
-    onNavigateToRealEstate : () -> Unit
+    onNavigateToRealEstate : () -> Unit,
+    onNavigateToMetal : () -> Unit
 ) {
 
     Scaffold(
@@ -509,6 +512,86 @@ fun HomeScreen(
                 }
 
 
+                item{
+                    Column(
+                        modifier = Modifier.fillMaxWidth().clip(
+                            shape = RoundedCornerShape(16.dp)
+                        ).background(
+                            color = MaterialTheme.colorScheme.surface
+
+                        ).padding(
+                            horizontal = 16.dp,
+                            vertical = 16.dp
+
+                        ),
+                    ) {
+                        Text(
+                            text = "Physical Gold",
+                            style = MaterialTheme.typography.normal.copy(
+                                fontWeight = FontWeight.W600,
+                                fontSize = 18.sp,
+                                lineHeight = 26.sp,
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(modifier = Modifier.wrapContentSize()) {
+                            Text(
+                                text = "Invested: ",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "$${state.totalInvestedInMetals.toCommaString()}",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                            )
+
+
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = if (state.isMetalPositive) {
+                                    "+$${state.MetsAbs.toCommaString()}"
+                                } else {
+                                    "-$${state.MetsAbs.toCommaString()}"
+                                },
+                                style = MaterialTheme.typography.small,
+                                color = if (state.isMetalPositive) EmeraldGreen else LossRed
+
+                            )
+
+
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+
+                        ) {
+
+                            Text(
+                                text = "Total Items: ${state.totalItemsInMetals}",
+                                style = MaterialTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                            )
+
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowRight,
+                                modifier = Modifier.size(
+                                    24.dp
+                                ).clickable {
+                                    onNavigateToMetal()
+                                },
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+
+                            )
+                        }
+
+                    }
+                }
             }
 
         }

@@ -8,6 +8,7 @@ import com.vs.oneportfolio.main.domain.realestate.notification.RENotification
 import com.vs.oneportfolio.main.presentaion.crypto.CryptoViewModel
 import com.vs.oneportfolio.main.presentaion.fixedAssets.FixedAssetsViewModel
 import com.vs.oneportfolio.main.presentaion.home.HomeViewModel
+import com.vs.oneportfolio.main.presentaion.metals.MetalViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.RealViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateViewModel
 import com.vs.oneportfolio.main.presentaion.stocks.StockViewModel
@@ -24,6 +25,7 @@ val mainModule = module {
     viewModelOf(::HomeViewModel)
     viewModelOf(::StockViewModel)
     viewModelOf(::CryptoViewModel)
+    viewModelOf(::MetalViewModel)
     viewModelOf(::FixedAssetsViewModel)
     viewModelOf(::RealViewModel)
     viewModelOf(::AddEstateViewModel)

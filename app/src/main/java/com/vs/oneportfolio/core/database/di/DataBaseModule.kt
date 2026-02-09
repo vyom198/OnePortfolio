@@ -41,6 +41,11 @@ val databaseModule = module {
         get<PortfolioDatabase>().realEstateDao
 
     }
+    single {
+        get<PortfolioDatabase>().metaldao
+
+    }
+
 
 
     singleOf(::PortfolioAlarmScheduler) bind AlarmScheduler::class

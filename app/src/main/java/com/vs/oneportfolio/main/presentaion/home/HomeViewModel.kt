@@ -4,6 +4,7 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.lifecycle.viewModelScope
  import com.vs.oneportfolio.core.database.crypto.CryptoDao
  import com.vs.oneportfolio.core.database.fixedincome.FixedIcomeDao
+ import com.vs.oneportfolio.core.database.metals.MetalDao
  import com.vs.oneportfolio.core.database.realestate.RealEstateDao
  import com.vs.oneportfolio.core.database.stocks.StockDao
  import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,8 @@ class HomeViewModel(
    private  val stockDao: StockDao,
     private val cryptoDao: CryptoDao,
     private val fixedIcomeDao: FixedIcomeDao,
-    private  val realEstateDao: RealEstateDao
+    private  val realEstateDao: RealEstateDao,
+    private val metalDao : MetalDao
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -77,6 +79,16 @@ class HomeViewModel(
                     )
                 }
 
+            }
+        }
+        viewModelScope.launch {
+            metalDao.getCount().collect {
+                count ->
+                _state.update {
+                    it.copy(
+                        totalItemsInMetals = count
+                    )
+                }
             }
         }
     }
@@ -165,6 +177,27 @@ class HomeViewModel(
             }
 
 
+        }
+
+        viewModelScope.launch {
+            metalDao.gettotalCurrentValue().collect {
+                totalCurrentValue ->
+                _state.update {
+                    it.copy(
+                        totalCurrentValueOfMetals = totalCurrentValue
+                    )
+                }
+            }
+        }
+        viewModelScope.launch {
+            metalDao.getTotalInvestedValue().collect {
+                    totalInvested ->
+                _state.update {
+                    it.copy(
+                        totalInvestedInMetals = totalInvested
+                    )
+                }
+            }
         }
 
     }

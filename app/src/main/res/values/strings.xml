@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">OnePortfolio</string>
+    <string name="app_name">One Portfolio</string>
     <string name="input_hint">search stock by ticker or name</string>
 </resources>

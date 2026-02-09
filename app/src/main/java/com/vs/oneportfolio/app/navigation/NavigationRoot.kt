@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.vs.oneportfolio.main.presentaion.crypto.CryptoRoot
 import com.vs.oneportfolio.main.presentaion.fixedAssets.FixedAssetsRoot
 import com.vs.oneportfolio.main.presentaion.home.HomeRoot
+import com.vs.oneportfolio.main.presentaion.metals.MetalRoot
 import com.vs.oneportfolio.main.presentaion.realestate.RealRoot
 import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateRoot
 import com.vs.oneportfolio.main.presentaion.stocks.StockRoot
@@ -45,7 +46,14 @@ fun NavigationRoot(
                         launchSingleTop = true
 
                     }
+                },
+                onNavigateToMetal = {
+                    navController.navigate(AppRoute.Metals){
+                        launchSingleTop = true
+                    }
+
                 }
+
 
 
             )
@@ -104,6 +112,16 @@ fun NavigationRoot(
                     navController.popBackStack()
                 }
             )
+
+        }
+
+        composable<AppRoute.Metals> {
+            MetalRoot (
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+
 
         }
 
