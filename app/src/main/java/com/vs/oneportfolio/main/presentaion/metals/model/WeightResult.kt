@@ -12,7 +12,14 @@ fun convertToOz(input: String, unitName: String): WeightResult {
         else -> WeightResult(numericValue * 0.035274, 1) // Default to grams
     }
 }
-
+fun convertFromOz(weightInOz: Double, unitId: Int): Double {
+    return when (unitId) {
+        1 -> weightInOz / 0.035274  // Oz to Grams
+        2 -> weightInOz / 35.274    // Oz to Kilograms
+        3 -> weightInOz             // Already in Ounces
+        else -> weightInOz / 0.035274 // Default fallback to Grams
+    }
+}
 object WeightUnitMapper {
     private val idToString = mapOf(1 to "g", 2 to "kg", 3 to "oz")
     private val stringToId = idToString.entries.associate { it.value to it.key }

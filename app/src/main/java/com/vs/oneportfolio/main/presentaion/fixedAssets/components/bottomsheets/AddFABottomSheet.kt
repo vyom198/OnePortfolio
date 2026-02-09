@@ -16,18 +16,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
@@ -55,6 +59,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -99,18 +104,18 @@ fun AddfixedAsset(
     onSaved: (FixedIncomeEntity) -> Unit
 ) {
 
-    var depositName by remember { mutableStateOf("") }
-    var InstitutionName by remember { mutableStateOf("") }
-    var amtPrincipal by remember { mutableStateOf("") }
-    var interestRatePercent by remember { mutableStateOf("") }
-    var selected by remember { mutableStateOf(PayOutType.MONTHLY) }
-    var OpenDate by remember { mutableStateOf<Long?>(null) }
-    var MaturityDate by remember { mutableStateOf<Long?>(null) }
-    var expanded by remember { mutableStateOf(false) }
+    var depositName by retain { mutableStateOf("") }
+    var InstitutionName by retain { mutableStateOf("") }
+    var amtPrincipal by retain { mutableStateOf("") }
+    var interestRatePercent by retain { mutableStateOf("") }
+    var selected by retain { mutableStateOf(PayOutType.MONTHLY) }
+    var OpenDate by retain { mutableStateOf<Long?>(null) }
+    var MaturityDate by retain { mutableStateOf<Long?>(null) }
+    var expanded by retain { mutableStateOf(false) }
     val radioOption = listOf(
         "Compounding", "Income"
     )
-    var selectedOption by remember { mutableStateOf(radioOption[0]) }
+    var selectedOption by retain { mutableStateOf(radioOption[0]) }
     val fixedAsset = FixedIncomeEntity(
         depositName = depositName,
         InstitutionName = InstitutionName,
@@ -126,7 +131,7 @@ fun AddfixedAsset(
         onDismissRequest = { onDismiss() },
         containerColor = MaterialTheme.colorScheme.background,
         sheetState = rememberModalBottomSheetState(),
-        modifier = Modifier
+        modifier = Modifier.imePadding()
     ) {
         Column(
             modifier = Modifier
@@ -135,7 +140,8 @@ fun AddfixedAsset(
                 .padding(
                     horizontal = 16.dp,
                     vertical = 16.dp
-                )
+                ).weight(1f)
+                .verticalScroll(rememberScrollState())
         ) {
 
             Text(
