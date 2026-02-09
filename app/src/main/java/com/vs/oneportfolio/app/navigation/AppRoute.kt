@@ -21,6 +21,10 @@ sealed interface AppRoute {
 
     @Serializable
     data class AddEstate(val title : String, val id : Int? = null) : AppRoute
+
+    @Serializable
+    object Metals : AppRoute
+
 }
 
 

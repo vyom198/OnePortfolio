@@ -8,6 +8,8 @@ import com.vs.oneportfolio.core.database.fixedincome.FixedIcomeDao
 import com.vs.oneportfolio.core.database.fixedincome.FixedIncomeEntity
 import com.vs.oneportfolio.core.database.fixedincome.history.MaturedFADao
 import com.vs.oneportfolio.core.database.fixedincome.history.MaturedFEntity
+import com.vs.oneportfolio.core.database.metals.MetalDao
+import com.vs.oneportfolio.core.database.metals.MetalEntity
 import com.vs.oneportfolio.core.database.realestate.RealEstateDao
 import com.vs.oneportfolio.core.database.realestate.RealEstateEntity
 import com.vs.oneportfolio.core.database.stocks.StockDao
@@ -15,8 +17,9 @@ import com.vs.oneportfolio.core.database.stocks.StocksEntity
 
 @Database(
     entities = [StocksEntity::class , CryptoEntity::class ,
-        FixedIncomeEntity::class, MaturedFEntity::class , RealEstateEntity::class],
-    version = 6,
+                FixedIncomeEntity::class, MaturedFEntity::class , RealEstateEntity::class,
+               MetalEntity::class],
+    version = 8,
 )
 abstract class PortfolioDatabase : RoomDatabase() {
      abstract val stockDao : StockDao
@@ -27,5 +30,7 @@ abstract class PortfolioDatabase : RoomDatabase() {
      abstract  val  maturedFADao : MaturedFADao
 
      abstract  val realEstateDao : RealEstateDao
+
+     abstract  val metaldao : MetalDao
 
 }

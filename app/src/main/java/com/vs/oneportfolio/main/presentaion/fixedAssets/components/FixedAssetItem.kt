@@ -203,7 +203,7 @@ fun FixedAssetItem(item: FixedAssetUI
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Reminders" ,
-                style = MaterialTheme.typography.names,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(10.dp))

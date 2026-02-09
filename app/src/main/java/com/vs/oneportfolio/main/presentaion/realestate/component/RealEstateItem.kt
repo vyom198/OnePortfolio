@@ -140,17 +140,7 @@ fun RealEstateItem(item: RealEstateUI
                 style = MaterialTheme.typography.label,
                 color = EmeraldGreen
             )
-            Icon(
-                imageVector = Icons.Default.EditNote,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .size(24.dp).clickable{
-                        onEditClick(item.id)
-                    },
 
-                contentDescription = null,
-
-            )
         }
 
         if(expanded){
@@ -208,7 +198,7 @@ fun RealEstateItem(item: RealEstateUI
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "Mortgage Payment: ",
+                        text = "Installment: ",
                         style = MaterialTheme.typography.small,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -300,8 +290,17 @@ fun RealEstateItem(item: RealEstateUI
                     onNotifyTax(it)
                 }
             )
-
-
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Edit Details" ,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.align(
+                    Alignment.End
+                ).clickable {
+                    onEditClick(item.id)
+                }
+            )
         }
 
 
