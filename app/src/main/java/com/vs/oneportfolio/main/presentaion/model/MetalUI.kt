@@ -24,7 +24,7 @@ data class MetalUI(
         get() = currentPrice - purchasePrice
 
     val isPositive
-        get() = gainOrLoss > 0
+        get() = gainOrLoss >= 0
 
     val abs
         get() = abs(gainOrLoss)

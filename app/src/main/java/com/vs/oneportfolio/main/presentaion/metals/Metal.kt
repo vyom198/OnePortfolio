@@ -143,7 +143,11 @@ fun MetalScreen(
 
             ) {
                 items(state.metalList) { item ->
-                    MetalItem(item)
+                    MetalItem(item,
+                         OnEdit = {
+                            onAction(MetalAction.onEdit(item))
+                        }
+                        )
                 }
             }
         }
@@ -152,13 +156,3 @@ fun MetalScreen(
 
 
 
-//@Preview
-//@Composable
-//private fun Preview() {
-//    OnePortfolioTheme {
-//        MetalScreen(
-//            state = MetalState(),
-//            onAction = {}
-//        )
-//    }
-//}
