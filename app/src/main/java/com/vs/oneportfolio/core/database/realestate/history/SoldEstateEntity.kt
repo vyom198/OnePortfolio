@@ -10,4 +10,5 @@ data class SoldEstateEntity(
     val address : String ,       // e.g., "Residential", "Commercial", "Land"
     val properImg : String? = null ,
     val currentMarketValue: Double = 0.0,
+    val purchasePrice: Double = 0.0,
 )

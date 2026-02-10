@@ -272,6 +272,7 @@ class AddEstateViewModel(
                         address = item.address ?: "",
                         currentMarketValue = item.currentMarketValue,
                         properImg = item.properImg,
+                        purchasePrice = item.purchasePrice
                     )
                     deleteAlarmsAsynchrously(item)
                     soldEstateDao.insertSoldEstate(soldItem)
