@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vs.oneportfolio.core.database.crypto.CryptoDao
 import com.vs.oneportfolio.core.database.crypto.CryptoEntity
+import com.vs.oneportfolio.core.database.crypto.history.SoldCrypto
+import com.vs.oneportfolio.core.database.crypto.history.SoldCryptoDao
 import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.database.stocks.StocksEntity
 import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
@@ -11,25 +13,31 @@ import com.vs.oneportfolio.core.finnhubNetwork.cryptoDtos.CoinMetadata
 import com.vs.oneportfolio.core.finnhubNetwork.util.Result
 import com.vs.oneportfolio.main.presentaion.model.CryptoUI
 import com.vs.oneportfolio.main.presentaion.model.StockUI
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
 import timber.log.Timber
 import kotlin.math.abs
 
 class CryptoViewModel(
     private val cryptoDao: CryptoDao,
-    private val finnHubManager: FinnHubManager
+    private val finnHubManager: FinnHubManager,
+    private val soldCryptoDao: SoldCryptoDao
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
-
+    private  val evenChannel = Channel<CryptoEvent>()
+    val event = evenChannel.receiveAsFlow()
     private val _state = MutableStateFlow(CryptoState())
     val state = _state
         .onStart {
@@ -139,12 +147,11 @@ class CryptoViewModel(
     }
     fun onAction(action: CryptoAction) {
         when (action) {
-            is CryptoAction.AddShare -> {
+            is CryptoAction.OnMenuClick -> {
                 viewModelScope.launch {
                     _state.update {
                         it.copy(
                             currentUpdatingCrypto = action.name,
-                            addingShare = true
                         )
 
                     }
@@ -200,6 +207,63 @@ class CryptoViewModel(
                 }
             }
             is CryptoAction.onUpdateClick -> updateStock(action.quantity , action.amt)
+            CryptoAction.onDeleteCancel -> {
+                _state.update {
+                    it.copy(
+                        isDeleting = false,
+                        currentUpdatingCrypto = null
+                    )
+                }
+            }
+            CryptoAction.onDeleteConfirm -> {
+                viewModelScope.launch {
+                    cryptoDao.deleteCrypto(_state.value.currentUpdatingCrypto!!.id)
+                    _state.update {
+                        it.copy(
+                            isDeleting = false,
+                            currentUpdatingCrypto = null
+                        )
+                    }
+                }
+            }
+            CryptoAction.onDeleting -> {
+                _state.update {
+                    it.copy(
+                        isDeleting = true
+                    )
+                }
+            }
+            CryptoAction.onEditShareClick -> {
+                _state.update {
+                    it.copy(
+                        addingShare = true
+                    )
+                }
+            }
+            CryptoAction.onSoldClick -> {
+                viewModelScope.launch {
+                    val item = _state.value.currentUpdatingCrypto
+                    if(item!=null){
+                        val solItem = SoldCrypto(
+                            name = item.name,
+                            quantity = item.coins,
+                            totalCurrentValue = item.currentPrice
+                        )
+                        soldCryptoDao.insertSoldCrypto(solItem)
+
+                        cryptoDao.deleteCrypto(item.id)
+                    }
+                    _state.update {
+                        it.copy(
+                            currentUpdatingCrypto = null ,
+
+                        )
+
+                    }
+                    evenChannel.send(CryptoEvent.onSold)
+
+                }
+            }
         }
     }
 

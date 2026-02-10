@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -31,15 +32,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
+import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
 import com.vs.oneportfolio.core.theme.ui.Values
 import com.vs.oneportfolio.core.theme.ui.label
 import com.vs.oneportfolio.core.theme.ui.names
 import com.vs.oneportfolio.core.theme.ui.normal
+import com.vs.oneportfolio.core.theme.ui.small
 import com.vs.oneportfolio.main.mapper.formats
+import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.AddAssetTextField
 import com.vs.oneportfolio.main.presentaion.model.CryptoUI
 import com.vs.oneportfolio.main.presentaion.model.StockUI
 
@@ -73,8 +78,8 @@ fun UpdateStockItem(modifier: Modifier = Modifier,
         onDismissRequest = { onDismiss() },
         containerColor = MaterialTheme.colorScheme.background,
         dragHandle = null ,
-        sheetState = rememberModalBottomSheetState(),
-        modifier = Modifier
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        modifier = Modifier.imePadding()
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(
@@ -102,159 +107,111 @@ fun UpdateStockItem(modifier: Modifier = Modifier,
 
             }
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Total Amount Invested" , style = MaterialTheme.typography.label,
+            Text(text = "Add more coins" , style = MaterialTheme.typography.label,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = totalAmtInvested,
-                textStyle = MaterialTheme.typography.normal,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
-                onValueChange = {
+            AddAssetTextField(
+                onTextChange = {
                     totalAmtInvested = it
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                onClear = {
+                    totalAmtInvested = ""
+                },
+                isNumber = true ,
+                text = totalAmtInvested,
+                label = "Amount Invested",
+                hint = "e.g. $4000"
 
-                modifier = Modifier.height(60.dp).fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                maxLines = 1,
-                placeholder = {
-                    Text(
-                        text = "$2000",
-                        style = MaterialTheme.typography.normal,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = totalCoins,
-                textStyle = MaterialTheme.typography.normal,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-
-                onValueChange = {
+            AddAssetTextField(
+                onTextChange = {
                     totalCoins = it
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.height(60.dp).fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                maxLines = 1,
+                onClear = {
+                    totalCoins = ""
+                },
+                isNumber = true ,
+                text = totalCoins,
+                label = "Total Coins Recieved",
+                hint = "e.g. 3.5 "
 
-                placeholder = {
-                    Text(
-                        text = "Holdings Received",
-                        style = MaterialTheme.typography.normal,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             )
 
             if(totalCoins.isNotEmpty() && totalAmtInvested.isNotEmpty()){
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "This averages out to $${(totalAmtInvested.toDouble()/totalCoins.toDouble()).formats()} per coin.",
-                    style = MaterialTheme.typography.Values,
+                    style = MaterialTheme.typography.small,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Or" , style = MaterialTheme.typography.names,
+            Text(text = "Or" , style = MaterialTheme.typography.normal.copy(
+                fontWeight = FontWeight.W600
+            ),
                 modifier = Modifier.fillMaxWidth(),
-                 textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Sold Amount" , style = MaterialTheme.typography.label,
+            Text(text = "Log your sold coins" , style = MaterialTheme.typography.label,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = soldAmount,
-                textStyle = MaterialTheme.typography.normal,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
-                onValueChange = {
-                  soldAmount = it
+            AddAssetTextField(
+                onTextChange = {
+                    soldAmount = it
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                onClear = {
+                    soldAmount = ""
+                },
+                isNumber = true ,
+                text = soldAmount,
+                label = "Coins sold At",
+                hint = "e.g. $3000"
 
-                modifier = Modifier.height(60.dp).fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                maxLines = 1,
-                placeholder = {
-                    Text(
-                        text = "$2000",
-                        style = MaterialTheme.typography.normal,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = totalCoinsSold,
-                textStyle = MaterialTheme.typography.normal,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-
-                onValueChange = {
-                   totalCoinsSold = it
+            AddAssetTextField(
+                onTextChange = {
+                    totalCoinsSold = it
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.height(60.dp).fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                maxLines = 1,
+                onClear = {
+                    totalCoinsSold = ""
+                },
+                isNumber = true ,
+                text = totalCoinsSold,
+                label = "Coins Sold ",
+                hint = "e.g. 3.5 "
 
-                placeholder = {
-                    Text(
-                        text = "Shares Sold",
-                        style = MaterialTheme.typography.normal,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             )
             if(totalCoinsSold.isNotEmpty() && soldAmount.isNotEmpty()){
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "This averages out to $${(soldAmount.toDouble()/totalCoinsSold.toDouble()).formats()} per share.",
-                    style = MaterialTheme.typography.Values,
+                    text = "This averages out to $${(soldAmount.toDouble()/totalCoinsSold.toDouble()).formats()} per coin.",
+                    style = MaterialTheme.typography.small,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
-                Button(
-                    onClick = {onAdd(
-                        quantity.toDouble(), amt
-                    )},
-                    enabled = totalCoins.isNotEmpty() && totalAmtInvested.isNotEmpty()
-                            || totalCoinsSold.isNotEmpty() && soldAmount.isNotEmpty(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = EmeraldGreen,
+            Button(
+                onClick = {onAdd(
+                    quantity.toDouble(), amt
+                )},
+                enabled = totalCoins.isNotEmpty() && totalAmtInvested.isNotEmpty()
+                        || totalCoinsSold.isNotEmpty() && soldAmount.isNotEmpty(),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SkyBlueAccent,
 
-                        ),
-                    modifier = Modifier.fillMaxWidth().height(50.dp)
-                ) {
-                    Text(
-                        text = "Confirm",
-                        style = MaterialTheme.typography.normal
-                    )
+                    ),
+                modifier = Modifier.fillMaxWidth().height(50.dp)
+            ) {
+                Text(
+                    text = "Confirm",
+                    style = MaterialTheme.typography.normal
+                )
 
-                }
+            }
 
 
         }
