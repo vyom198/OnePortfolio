@@ -29,7 +29,7 @@ import com.vs.oneportfolio.core.database.stocks.history.SoldStockEntity
                MetalEntity::class, SoldMetalEntity::class ,
         SoldEstateEntity :: class, SoldCrypto::class , SoldStockEntity::class
                ],
-    version = 10,
+    version = 11,
 )
 abstract class PortfolioDatabase : RoomDatabase() {
      abstract val stockDao : StockDao

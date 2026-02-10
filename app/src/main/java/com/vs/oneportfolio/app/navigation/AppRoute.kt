@@ -25,6 +25,21 @@ sealed interface AppRoute {
     @Serializable
     object Metals : AppRoute
 
+    @Serializable
+    object SoldCrypto : AppRoute
+
+    @Serializable
+    object SoldRealEstate : AppRoute
+
+    @Serializable
+    object SoldMetal : AppRoute
+
+    @Serializable
+    object SoldStock : AppRoute
+
+    @Serializable
+    object SoldFixedAsset : AppRoute
+
 
 
 

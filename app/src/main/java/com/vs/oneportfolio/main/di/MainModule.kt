@@ -6,12 +6,17 @@ import com.vs.oneportfolio.main.data.realestate.notification.RENotificationSeriv
 import com.vs.oneportfolio.main.domain.fixedAsset.notification.FANotification
 import com.vs.oneportfolio.main.domain.realestate.notification.RENotification
 import com.vs.oneportfolio.main.presentaion.crypto.CryptoViewModel
+import com.vs.oneportfolio.main.presentaion.crypto.history.SoldCryptoViewModel
 import com.vs.oneportfolio.main.presentaion.fixedAssets.FixedAssetsViewModel
+import com.vs.oneportfolio.main.presentaion.fixedAssets.history.FixedHistoryViewModel
 import com.vs.oneportfolio.main.presentaion.home.HomeViewModel
 import com.vs.oneportfolio.main.presentaion.metals.MetalViewModel
+import com.vs.oneportfolio.main.presentaion.metals.history.SoldMetalViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.RealViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateViewModel
+import com.vs.oneportfolio.main.presentaion.realestate.history.SoldEstateViewModel
 import com.vs.oneportfolio.main.presentaion.stocks.StockViewModel
+import com.vs.oneportfolio.main.presentaion.stocks.history.SoldStocksViewModel
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -29,6 +34,11 @@ val mainModule = module {
     viewModelOf(::FixedAssetsViewModel)
     viewModelOf(::RealViewModel)
     viewModelOf(::AddEstateViewModel)
+    viewModelOf(::SoldCryptoViewModel)
+    viewModelOf(::FixedHistoryViewModel)
+    viewModelOf(::SoldMetalViewModel)
+    viewModelOf(::SoldEstateViewModel)
+    viewModelOf(::SoldStocksViewModel)
     singleOf(::FANotificationService) bind FANotification::class
     singleOf(::RENotificationSerivice) bind RENotification::class
 

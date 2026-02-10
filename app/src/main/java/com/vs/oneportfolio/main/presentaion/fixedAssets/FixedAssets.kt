@@ -6,14 +6,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +47,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun FixedAssetsRoot(
     viewModel: FixedAssetsViewModel = koinViewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onNavigateToHistory : () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope ()
@@ -67,7 +71,8 @@ fun FixedAssetsRoot(
         state = state,
         onAction = viewModel::onAction ,
         onBackClick = onBackClick,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
+        onNavigateToHistory = onNavigateToHistory
     )
 }
 
@@ -77,7 +82,8 @@ fun FixedAssetsScreen(
     state: FixedAssetsState,
     onAction: (FixedAssetsAction) -> Unit,
     onBackClick: () -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    onNavigateToHistory : () -> Unit
 ) {
     Scaffold(
         modifier = Modifier
@@ -107,7 +113,17 @@ fun FixedAssetsScreen(
                     containerColor = MaterialTheme.colorScheme.background
                 ),
                 actions = {
-
+                    Icon(
+                        imageVector = Icons.Filled.History,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                onNavigateToHistory()
+                            },
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.width(40.dp))
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = null,

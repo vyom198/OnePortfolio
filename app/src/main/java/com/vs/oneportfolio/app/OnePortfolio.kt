@@ -11,6 +11,7 @@ import com.vs.oneportfolio.core.database.crypto.CryptoDao
 import com.vs.oneportfolio.core.database.di.databaseModule
 import com.vs.oneportfolio.core.database.fixedincome.FixedIcomeDao
 import com.vs.oneportfolio.core.database.metals.MetalDao
+import com.vs.oneportfolio.core.database.metals.getKaratFactor
 import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
 import com.vs.oneportfolio.core.finnhubNetwork.di.networkModule
@@ -164,7 +165,7 @@ class OnePortfolio : Application() {
                     try {
                         val result = networkManager.getGoldPrice()
                         if (result is Result.Success) {
-                            metalDao.updateMetal(metal.id, result.data)
+                            metalDao.updateMetal(metal.id, result.data * metal.weight * getKaratFactor(metal.karat))
                         } else {
                             // Handle domain error (e.g., 404, 500)
                             println("Server error fetching price for ${metal.id}")
