@@ -30,6 +30,13 @@ fun Double.formats() : String {
     return "%.2f".format(this
     )
 }
+fun Double.formatsO(round: Boolean = true) : String {
+    return if (round) {
+        "%.0f".format(this)
+    } else {
+        this.toInt().toString()
+    }
+}
 fun Double.toCommaString(
     minDecimals: Int = 0,
     maxDecimals: Int = 2,

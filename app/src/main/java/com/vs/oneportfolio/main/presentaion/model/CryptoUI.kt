@@ -11,6 +11,8 @@ val coins:Double,
 val averagePrice: Double,
 val currentPrice : Double,
 val lastUpdated: Long = 0,
+
+
 ){
 
 

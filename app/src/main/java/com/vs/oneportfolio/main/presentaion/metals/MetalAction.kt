@@ -8,6 +8,11 @@ sealed interface MetalAction {
     data object  onDismiss : MetalAction
   data class  onSaved(val metal : MetalEntity) : MetalAction
   data class  onEdit(val metal : MetalUI) : MetalAction
+
+  data object OnSold : MetalAction
+  data object OnDelete : MetalAction
+  data object OnCancelDelete : MetalAction
+  data object OnDeleteConfirm : MetalAction
 }
 
 

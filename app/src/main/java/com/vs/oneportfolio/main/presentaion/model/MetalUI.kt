@@ -16,7 +16,6 @@ data class MetalUI(
     // Financial Tracking
     val purchasePrice: Double,    // Total amount paid
     val purchaseDate: Long,       // Timestamp for "15 feb" formatting
-
     // Diversification/Metadata
     val storageLocation: String?  // "Bank Vault", "Home Safe"
 ){

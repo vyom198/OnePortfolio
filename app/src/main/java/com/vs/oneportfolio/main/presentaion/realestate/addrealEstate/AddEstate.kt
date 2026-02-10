@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -53,11 +58,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.vs.oneportfolio.R
+import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
+import com.vs.oneportfolio.core.theme.ui.LossRed
 import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
+import com.vs.oneportfolio.core.theme.ui.label
 import com.vs.oneportfolio.core.theme.ui.names
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.AddAssetTextField
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.DatePickerFieldToModal
+import com.vs.oneportfolio.main.presentaion.metals.components.bottomsheet.DeleteBottomSheet
 import com.vs.oneportfolio.main.presentaion.model.ObserveAsEvents
 import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateEvent
 import kotlinx.coroutines.launch
@@ -92,6 +101,20 @@ fun AddEstateRoot(
                 scope.launch {
                     snackbarHostState.showSnackbar("picture updated successfully")
                 }
+            }
+            is AddEstateEvent.onDelete -> {
+                scope.launch {
+                    snackbarHostState.showSnackbar("picture deleted successfully")
+
+                }
+                onBack()
+            }
+            is AddEstateEvent.OnSold -> {
+                scope.launch {
+                    snackbarHostState.showSnackbar("Item Moved to History")
+
+                }
+                onBack()
             }
         }
     }
@@ -143,7 +166,38 @@ fun AddEstateScreen(
                     Text(state.screenTitle,
                         style = MaterialTheme.typography.topBarTitle)
 
+                } ,
+                actions = {
+                    if(state.screenTitle != "Add Your Real Estate"){
+                        TextButton(
+                            onClick = {
+                                onAction(AddEstateAction.OnDelete)
+                            },
+                            modifier = Modifier.wrapContentSize()
+                        ){
+                            Text(
+                                text = "Delete",
+                                style = MaterialTheme.typography.label,
+                                color = LossRed
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        TextButton(
+                            onClick = {
+                                onAction(AddEstateAction.OnSold)
+                            },
+                            modifier = Modifier.wrapContentSize()
+                        ){
+                            Text(
+                                text = "Sold",
+                                style = MaterialTheme.typography.label,
+                                color = EmeraldGreen
+                            )
+                        }
+                    }
+
                 }
+
             )
 
         }
@@ -152,9 +206,19 @@ fun AddEstateScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues).verticalScroll(
-                    state = androidx.compose.foundation.rememberScrollState()
+                    state = rememberScrollState()
                 ).animateContentSize(),
         ) {
+            if(state.isDeleting){
+                DeleteBottomSheet(
+                    onDismiss = {
+                        onAction(AddEstateAction.OnCancelDelete)
+                    },
+                    OnDelete = {
+                        onAction(AddEstateAction.OnDeleteConfirm)
+                    }
+                )
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth().height(200.dp)
@@ -163,7 +227,7 @@ fun AddEstateScreen(
                     ).border(
                         border = BorderStroke(
                             width = 1.dp,
-                            color = SkyBlueAccent,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         ) ,
                         shape = RoundedCornerShape(12.dp)
 
@@ -189,12 +253,15 @@ fun AddEstateScreen(
 
             }
             Spacer(modifier = Modifier.height(12.dp))
-            Button(
+            OutlinedButton(
                 onClick = {
                     onAction(AddEstateAction.onChangeAvtar)
                 },
-                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                    containerColor = SkyBlueAccent),
+                border = BorderStroke(
+                  width = 1.dp ,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                ),
                 modifier = Modifier
                     .height(44.dp).align(
                         Alignment.CenterHorizontally
@@ -430,7 +497,7 @@ fun AddEstateScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 enabled = state.purchaseDate != null,
-                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                colors = ButtonDefaults.buttonColors(
                     containerColor = SkyBlueAccent
                 ),
                 onClick = {

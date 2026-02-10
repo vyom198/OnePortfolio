@@ -1,6 +1,7 @@
 package com.vs.oneportfolio.main.presentaion.realestate.addrealEstate
 
 import android.net.Uri
+import com.vs.oneportfolio.main.presentaion.metals.MetalAction
 
 sealed interface AddEstateAction {
     data class OnFieldUpdate(val field: EstateField, val value: String) : AddEstateAction
@@ -14,5 +15,8 @@ sealed interface AddEstateAction {
     data object onChangeAvtar :AddEstateAction
 
     data class  onUriGet(val uri : Uri) : AddEstateAction
-
+    data object OnSold :  AddEstateAction
+    data object OnDelete :  AddEstateAction
+    data object OnCancelDelete :  AddEstateAction
+    data object OnDeleteConfirm :  AddEstateAction
 }

@@ -15,14 +15,20 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,9 +46,13 @@ import com.vs.oneportfolio.main.presentaion.model.StockUI
 
 @Composable
 fun StockItem(item: StockUI,
-              onAddShare : (StockUI) -> Unit
+              onClickMenu : (StockUI) -> Unit,
+              onEdit : () -> Unit,
+              onDelete : () -> Unit,
+              onSold : () -> Unit ,
 
 ){
+    var enabled by remember { mutableStateOf(false) }
     Column(
       modifier = Modifier.fillMaxWidth().wrapContentHeight().clip(
           shape = RoundedCornerShape(16.dp)
@@ -110,13 +120,39 @@ fun StockItem(item: StockUI,
             )
 
             Spacer(modifier = Modifier.weight(1f))
-                Text(text = "Edit Shares",
-                    modifier = Modifier.clickable{
-                        onAddShare(item)
-                    },
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+              Icon(
+                  imageVector = Icons.Default.MoreVert,
+                  contentDescription = null,
+                  modifier = Modifier.size(24.dp).clickable{
+                      onClickMenu(item)
+                      enabled = true
+                  },
+                  tint = MaterialTheme.colorScheme.onSurfaceVariant
+
+
+              )
+             EditDropDow (
+
+                 onEdit = {
+                     onEdit()
+                     enabled = false
+
+                 },
+                 onDelete = {
+                     onDelete()
+                     enabled = false
+                 },
+                 onSold = {
+                     onSold()
+                     enabled = false
+                 },
+                 isMenuEnabled = enabled,
+                 OnDismiss = {
+                     enabled = false
+                 }
+
+
+            )
 
         }
     }

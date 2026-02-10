@@ -104,7 +104,7 @@ dependencies {
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiation)
-
+    implementation("de.charlex.compose:revealswipe:3.1.0-rc02")
     implementation(libs.ktor.client.okhttp)
     //implementation(libs.ktor.client.android)
 }

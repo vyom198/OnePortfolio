@@ -2,17 +2,22 @@ package com.vs.oneportfolio.main.presentaion.stocks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vs.oneportfolio.core.database.realestate.history.SoldEstateDao
 import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.database.stocks.StocksEntity
+import com.vs.oneportfolio.core.database.stocks.history.SoldStockDao
+import com.vs.oneportfolio.core.database.stocks.history.SoldStockEntity
 import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
 import com.vs.oneportfolio.core.finnhubNetwork.util.Result
 import com.vs.oneportfolio.main.presentaion.model.StockUI
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,13 +27,16 @@ import kotlin.math.abs
 
 class StockViewModel(
     private val stockDao: StockDao,
-    private val finnHubManager: FinnHubManager
+    private val finnHubManager: FinnHubManager,
+    private val soldStockDao: SoldStockDao
 
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
 
     private val _state = MutableStateFlow(StockState())
+    private val eventChannel = Channel<StockEven>()
+    val events = eventChannel.receiveAsFlow()
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
@@ -181,17 +189,7 @@ class StockViewModel(
                 }
             }
 
-            is StockAction.AddShare -> {
-                viewModelScope.launch {
-                    _state.update {
-                        it.copy(
-                            currentUpdatingStock = action.name,
-                            addingShare = true
-                        )
 
-                    }
-                }
-            }
 
             StockAction.onDismissUpdate -> {
                 _state.update {
@@ -202,6 +200,80 @@ class StockViewModel(
                 }
             }
             is StockAction.onUpdateClick -> updateStock(action.quantity , action.amt)
+
+            is StockAction.OnMenuClick -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            currentUpdatingStock = action.name,
+                        )
+
+                    }
+                }
+            }
+
+            StockAction.onDelete -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            isDeleting = true
+                        )
+                    }
+                }
+            }
+            StockAction.onDeleteCancel -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            isDeleting = false ,
+                            currentUpdatingStock = null
+                        )
+                    }
+                }
+            }
+            StockAction.onDeleteConfirm -> {
+                viewModelScope.launch {
+                    stockDao.deleteStock(
+                        _state.value.currentUpdatingStock!!.id
+                    )
+                    _state.update {
+                        it.copy(
+                            isDeleting = false,
+                            currentUpdatingStock = null
+                        )
+                    }
+
+                }
+            }
+            StockAction.onEditShareClick ->{
+                _state.update {
+                    it.copy(
+                        addingShare = true
+                    )
+                }
+            }
+            StockAction.onSoldClick -> {
+                viewModelScope.launch {
+                    val item = _state.value.currentUpdatingStock!!
+                    val soldItem = SoldStockEntity(
+                        name = item.name,
+                        quantity = item.quantity.toDouble(),
+                         totalCurrentValue = item.currentPrice
+                    )
+                    soldStockDao.insertSoldStock(soldItem)
+                    stockDao.deleteStock(
+                        _state.value.currentUpdatingStock!!.id
+                    )
+                    _state.update {
+                        it.copy(
+                            isDeleting = false,
+                            currentUpdatingStock = null
+                        )
+                    }
+                    eventChannel.send(StockEven.onSold)
+
+                }
+            }
         }
     }
 

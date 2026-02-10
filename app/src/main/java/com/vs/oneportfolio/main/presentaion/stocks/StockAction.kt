@@ -10,7 +10,16 @@ sealed interface StockAction {
     data object onDismiss : StockAction
     data object onDismissUpdate : StockAction
     data object Clear : StockAction
-    data class AddShare(val name : StockUI ) : StockAction
+    data class OnMenuClick(val name : StockUI ) : StockAction
     data class onUpdateClick(val quantity : Int , val amt : Double)  : StockAction
     data class  onSelect(val tickerItem : StockTicker) : StockAction
+
+
+
+    data object  onEditShareClick : StockAction
+    data object  onDelete : StockAction
+    data object  onDeleteConfirm : StockAction
+    data object onDeleteCancel : StockAction
+    data object onSoldClick : StockAction
+
 }

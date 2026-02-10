@@ -10,7 +10,12 @@ import com.vs.oneportfolio.app.navigation.AppRoute
 import com.vs.oneportfolio.core.AlarmManager.AlarmScheduler
 import com.vs.oneportfolio.core.database.realestate.RealEstateDao
 import com.vs.oneportfolio.core.database.realestate.RealEstateEntity
+import com.vs.oneportfolio.core.database.realestate.history.SoldEstateDao
+import com.vs.oneportfolio.core.database.realestate.history.SoldEstateEntity
 import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +23,10 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
 import java.io.File
 import java.io.FileOutputStream
 
@@ -26,7 +34,9 @@ class AddEstateViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val realEstateDao: RealEstateDao,
     private val context: Context,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
+    private val  soldEstateDao: SoldEstateDao,
+    private val scope : CoroutineScope
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -216,6 +226,89 @@ class AddEstateViewModel(
                 }
 
             }
+
+            AddEstateAction.OnCancelDelete -> {
+                _state.update {
+                    it.copy(
+                        isDeleting = false
+                    )
+                }
+            }
+            AddEstateAction.OnDelete -> {
+                _state.update {
+                    it.copy(
+                        isDeleting = true
+                    )
+                }
+            }
+            AddEstateAction.OnDeleteConfirm -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    withContext(Dispatchers.Main){
+                        _state.update {
+                            it.copy(
+                                isDeleting = false
+                            )
+
+                        }
+                    }
+
+                    val item = realEstateDao.getRealEstateById(id)
+                    deleteAlarmsAsynchrously(item!!)
+                    realEstateDao.deleteRealEstateById(item.id)
+
+                    withContext(Dispatchers.Main){
+
+                        eventChannel.send(AddEstateEvent.onDelete)
+                    }
+
+
+                }
+            }
+            AddEstateAction.OnSold -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val item = realEstateDao.getRealEstateById(id)
+                    val soldItem = SoldEstateEntity(
+                        propertyName = item!!.propertyName,
+                        address = item.address ?: "",
+                        currentMarketValue = item.currentMarketValue,
+                        properImg = item.properImg,
+                    )
+                    deleteAlarmsAsynchrously(item)
+                    soldEstateDao.insertSoldEstate(soldItem)
+                    realEstateDao.deleteRealEstateById(item.id)
+
+                    withContext(Dispatchers.Main){
+                        eventChannel.send(AddEstateEvent.OnSold)
+                    }
+
+                }
+            }
+        }
+    }
+    private fun deleteAlarmsAsynchrously(item: RealEstateEntity) {
+        scope.launch(Dispatchers.Default) {
+            try {
+                // Launch all alarm cancellations in parallel
+                val jobs = mutableListOf<Job>()
+
+                jobs.add(launch { alarmScheduler.cancelYield(item) })
+
+                if (item.mortgageReminder) {
+                    jobs.add(launch { alarmScheduler.cancelRepeatingMortgage(item) })
+                }
+                if (item.rentReminder) {
+                    jobs.add(launch { alarmScheduler.cancelRepeatingRent(item) })
+                }
+                if (item.taxReminder) {
+                    jobs.add(launch { alarmScheduler.cancelRepeatingTax(item) })
+                }
+
+                // Wait for all alarm cancellations to complete
+                jobs.joinAll()
+            }catch (e : Exception){
+                e.printStackTrace()
+            }
+
         }
     }
     private fun deleteOldFile(path: String?) {
