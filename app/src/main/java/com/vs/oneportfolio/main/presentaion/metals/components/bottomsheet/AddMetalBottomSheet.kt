@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,6 +39,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,6 +59,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.vs.oneportfolio.R
 import com.vs.oneportfolio.core.database.metals.MetalEntity
+import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
+import com.vs.oneportfolio.core.theme.ui.LossRed
 import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
 import com.vs.oneportfolio.core.theme.ui.label
 import com.vs.oneportfolio.core.theme.ui.names
@@ -74,7 +78,9 @@ import java.util.Calendar
 fun AddMetal(
     onDismiss: () -> Unit,
     onSaved: (MetalEntity) -> Unit,
-    item: MetalUI? = null
+    item: MetalUI? = null,
+    OnDelete : ()-> Unit ,
+    OnSold : () -> Unit ,
 ) {
     var enabled by retain { mutableStateOf(false) }
     var label by retain { mutableStateOf(item?.label ?: "") }
@@ -130,12 +136,42 @@ fun AddMetal(
                     ).weight(1f)
                     .verticalScroll(rememberScrollState())
             ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Your ${item?.label ?: "Gold"}",
+                        style = MaterialTheme.typography.label,
+                        color = MaterialTheme.colorScheme.onPrimary
 
-                Text(
-                    text = "Your ${item?.label ?: "Gold"}", style = MaterialTheme.typography.label,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    if(item != null){
+                        TextButton(
+                            onClick = OnDelete,
+                            modifier = Modifier.wrapContentSize()
+                        ){
+                            Text(
+                                text = "Delete",
+                                style = MaterialTheme.typography.label,
+                                color = LossRed
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        TextButton(
+                            onClick = OnSold,
+                            modifier = Modifier.wrapContentSize()
+                        ){
+                            Text(
+                                text = "Sold",
+                                style = MaterialTheme.typography.label,
+                                color = EmeraldGreen
+                            )
+                        }
+                    }
 
-                )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
                 AddAssetTextField(
                     onTextChange = {

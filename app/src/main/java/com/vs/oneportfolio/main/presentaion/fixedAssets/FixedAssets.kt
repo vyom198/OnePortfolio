@@ -18,11 +18,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +36,9 @@ import com.vs.oneportfolio.core.theme.ui.topBarTitle
 import com.vs.oneportfolio.main.presentaion.crypto.CryptoAction
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.FixedAssetItem
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.AddfixedAsset
+import com.vs.oneportfolio.main.presentaion.metals.components.bottomsheet.DeleteBottomSheet
+import com.vs.oneportfolio.main.presentaion.model.ObserveAsEvents
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -40,11 +47,27 @@ fun FixedAssetsRoot(
     onBackClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope ()
+    val snackbarHostState = remember { SnackbarHostState() }
+    ObserveAsEvents(
+        viewModel.events,
 
+    ) { event ->
+        when(event){
+            FixedAssetEvent.onDelete -> {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Deleted Successfully"
+                    )
+                }
+            }
+        }
+    }
     FixedAssetsScreen(
         state = state,
         onAction = viewModel::onAction ,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -53,7 +76,8 @@ fun FixedAssetsRoot(
 fun FixedAssetsScreen(
     state: FixedAssetsState,
     onAction: (FixedAssetsAction) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
         modifier = Modifier
@@ -64,6 +88,7 @@ fun FixedAssetsScreen(
             .padding(
                 horizontal = 16.dp
             ),
+        snackbarHost = { androidx.compose.material3.SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -127,6 +152,9 @@ fun FixedAssetsScreen(
                                },
                                onNotifyMaturity = {
                                   onAction(FixedAssetsAction.onNotifyMaturity(it, item ))
+                               },
+                               onDelete = {
+                                   onAction(FixedAssetsAction.OnDelete(item))
                                }
 
                            )
@@ -147,7 +175,17 @@ fun FixedAssetsScreen(
                      }
                  )
              }
-
+              
+            if(state.isDeleting){
+                DeleteBottomSheet(
+                    onDismiss = {
+                        onAction(FixedAssetsAction.OnCancelDelete)
+                    },
+                    OnDelete = {
+                        onAction(FixedAssetsAction.OnDeleteConfirm)
+                    }
+                )
+            }
 
 
         }

@@ -25,6 +25,10 @@ sealed interface AppRoute {
     @Serializable
     object Metals : AppRoute
 
+
+
+
+
 }
 
 

@@ -27,6 +27,7 @@ import com.vs.oneportfolio.core.finnhubNetwork.cryptoDtos.CoinMetadata
 import com.vs.oneportfolio.core.finnhubNetwork.stockDtos.StockTicker
 import com.vs.oneportfolio.core.theme.ui.CardSurface
 import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
+import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
 import com.vs.oneportfolio.core.theme.ui.names
 
 @Composable
@@ -38,7 +39,7 @@ fun TickerItem(item: StockTicker , isSelected : Boolean , onSelected : (StockTic
           color = CardSurface
       ).border(
           width = if(isSelected)2.dp else 0.dp ,
-          color = if(isSelected) EmeraldGreen else CardSurface,
+          color = if(isSelected) SkyBlueAccent else CardSurface,
           shape = RoundedCornerShape(16.dp)
       ).clickable{
           onSelected(item)
@@ -68,7 +69,7 @@ fun TickerItem(item: StockTicker , isSelected : Boolean , onSelected : (StockTic
             Icon(
                 imageVector = Icons.Filled.CheckCircle,
                 contentDescription = null,
-                tint = EmeraldGreen ,
+                tint = SkyBlueAccent ,
                 modifier = Modifier.size(24.dp)
 
             )

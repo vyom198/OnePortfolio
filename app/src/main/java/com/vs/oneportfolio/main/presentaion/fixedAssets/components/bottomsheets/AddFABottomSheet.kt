@@ -81,6 +81,7 @@ import com.vs.oneportfolio.core.database.fixedincome.FixedIncomeEntity
 import com.vs.oneportfolio.core.theme.ui.CardSurface
 import com.vs.oneportfolio.core.theme.ui.DeepNavyBg
 import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
+import com.vs.oneportfolio.core.theme.ui.LossRed
 import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
 import com.vs.oneportfolio.core.theme.ui.label
 import com.vs.oneportfolio.core.theme.ui.names
@@ -115,7 +116,7 @@ fun AddfixedAsset(
     val radioOption = listOf(
         "Compounding", "Income"
     )
-    var selectedOption by retain { mutableStateOf(radioOption[0]) }
+    var selectedOption by retain { mutableStateOf(null as String?) }
     val fixedAsset = FixedIncomeEntity(
         depositName = depositName,
         InstitutionName = InstitutionName,
@@ -144,11 +145,12 @@ fun AddfixedAsset(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            Text(
-                text = "Your Asset", style = MaterialTheme.typography.label,
-                color = MaterialTheme.colorScheme.onPrimary
+                Text(
+                    text = "Your Asset", style = MaterialTheme.typography.label,
+                    color = MaterialTheme.colorScheme.onPrimary
 
-            )
+                )
+
             Spacer(modifier = Modifier.height(10.dp))
             AddAssetTextField(
                 onTextChange = {
@@ -219,7 +221,7 @@ fun AddfixedAsset(
                     ).border(
                         border = BorderStroke(
                             width = 1.dp,
-                            color = SkyBlueAccent
+                            color = if(!expanded)MaterialTheme.colorScheme.onSurfaceVariant else SkyBlueAccent
                         ) ,
                         shape = RoundedCornerShape(12.dp)
 
@@ -247,7 +249,7 @@ fun AddfixedAsset(
                                 R.drawable.arrow_down
                             }
                         ),
-                        tint = SkyBlueAccent,
+                        tint = if(expanded)SkyBlueAccent else MaterialTheme.colorScheme.onSurfaceVariant,
                         contentDescription = null,
                         modifier = Modifier.clickable {
                             expanded = !expanded
@@ -320,7 +322,7 @@ fun AddfixedAsset(
                     ).border(
                         border = BorderStroke(
                             width = 1.dp,
-                            color = SkyBlueAccent
+                            color = if(selectedOption.isNullOrEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else SkyBlueAccent
                         ) ,
                         shape = RoundedCornerShape(12.dp)
                     )

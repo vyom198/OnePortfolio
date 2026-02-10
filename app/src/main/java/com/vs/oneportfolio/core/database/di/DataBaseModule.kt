@@ -45,6 +45,25 @@ val databaseModule = module {
         get<PortfolioDatabase>().metaldao
 
     }
+    single {
+        get<PortfolioDatabase>().soldMetalDao
+
+    }
+
+    single {
+        get<PortfolioDatabase>().soldEstateDao
+
+    }
+
+    single {
+        get<PortfolioDatabase>().soldCryptoDao
+
+    }
+    single {
+        get<PortfolioDatabase>().soldStockDao
+
+    }
+
 
 
 

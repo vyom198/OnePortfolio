@@ -10,6 +10,7 @@ import com.vs.oneportfolio.app.di.appModule
 import com.vs.oneportfolio.core.database.crypto.CryptoDao
 import com.vs.oneportfolio.core.database.di.databaseModule
 import com.vs.oneportfolio.core.database.fixedincome.FixedIcomeDao
+import com.vs.oneportfolio.core.database.metals.MetalDao
 import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
 import com.vs.oneportfolio.core.finnhubNetwork.di.networkModule
@@ -38,6 +39,7 @@ class OnePortfolio : Application() {
     private val networkManager : FinnHubManager by inject()
 
     private val stockDao : StockDao by inject()
+    private  val metalDao : MetalDao by inject()
     private val cryptoDao : CryptoDao by inject()
     override fun onCreate() {
         super.onCreate()
@@ -58,6 +60,7 @@ class OnePortfolio : Application() {
 
         startPriceSync()
         startCrptoPriceSync()
+        startGoldPriceSync()
         createNotificationChannel()
         createNotificationChannelForRE()
     }
@@ -134,6 +137,42 @@ class OnePortfolio : Application() {
                     Timber.d("result: $result")
                     if (result is Result.Success) {
                         cryptoDao.updateStockbyId(crypto.id, result.data?.price?:0.0 , result.data?.lastUpdated?:""  )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startGoldPriceSync() {
+        applicationScope.launch {
+            // 1. A flow that emits every 3 minutes
+            val timerFlow = flow {
+                while (true) {
+                    emit(Unit)
+                    delay(4 * 60 * 1000) // 3 minutes
+                }
+            }
+
+            // 2. A flow of tickers from the DB (emits whenever DB changes)
+            val tickerFlow = metalDao.getAllMetals().distinctUntilChanged()
+
+            // 3. Combine them: Update prices if timer ticks OR tickers change
+            combine(timerFlow, tickerFlow) { _,metals ->
+               metals
+            }.collect {  metals ->
+                metals.forEach { metal ->
+                    try {
+                        val result = networkManager.getGoldPrice()
+                        if (result is Result.Success) {
+                            metalDao.updateMetal(metal.id, result.data)
+                        } else {
+                            // Handle domain error (e.g., 404, 500)
+                            println("Server error fetching price for ${metal.id}")
+                        }
+                    } catch (e: Exception) {
+                        // 3. This prevents the crash
+                        // Handle network timeout, no internet, etc.
+                        println("Network failure: ${e.message}")
                     }
                 }
             }

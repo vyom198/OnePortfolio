@@ -30,6 +30,11 @@ interface MetalDao {
     @Query("SELECT SUM(purchasePrice) FROM metals")
     fun getTotalInvestedValue() : Flow<Double>
 
+    @Query("UPDATE metals SET currentPrice = :currentPrice*weight WHERE id = :id")
+    suspend fun updateMetal(id: Long, currentPrice: Double)
+
+
+
 
 
 }

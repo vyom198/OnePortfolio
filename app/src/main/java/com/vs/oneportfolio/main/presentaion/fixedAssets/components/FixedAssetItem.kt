@@ -33,10 +33,12 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +47,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
@@ -52,24 +55,28 @@ import com.vs.oneportfolio.R
 import com.vs.oneportfolio.core.theme.ui.CardSurface
 import com.vs.oneportfolio.core.theme.ui.DeepNavyBg
 import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
+import com.vs.oneportfolio.core.theme.ui.LossRed
 import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
 import com.vs.oneportfolio.core.theme.ui.Values
 import com.vs.oneportfolio.core.theme.ui.label
 import com.vs.oneportfolio.core.theme.ui.names
 import com.vs.oneportfolio.core.theme.ui.small
 import com.vs.oneportfolio.main.mapper.formats
+import com.vs.oneportfolio.main.mapper.formatsO
 import com.vs.oneportfolio.main.mapper.toCommaString
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.bottomsheets.convertMillisToDate
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.model.PayOutType
 import com.vs.oneportfolio.main.presentaion.model.FixedAssetUI
 import com.vs.oneportfolio.main.presentaion.stocks.components.InvestedAmt
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 
 @Composable
 fun FixedAssetItem(item: FixedAssetUI
                    ,onNotifyMaturity : (Boolean) -> Unit
-                   ,onNotifyPayment : (Boolean) -> Unit
+                   ,onNotifyPayment : (Boolean) -> Unit,
+                   onDelete : () -> Unit
 
 ) {
     Column(
@@ -94,6 +101,7 @@ fun FixedAssetItem(item: FixedAssetUI
     ){
         var expanded by remember{ mutableStateOf(false) }
         var progress by remember { mutableStateOf(0f) }
+        var target by retain{mutableStateOf(EmeraldGreen)}
         Row(
          modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -145,8 +153,10 @@ fun FixedAssetItem(item: FixedAssetUI
                 CustomFDProgress(
                     openedDate = item.dateOpened,
                     maturityDate = item.dateMaturity,
-                    onProgressChange = {
-                        progress = it
+                    onProgressChange = { p, color ->
+                        progress = p
+                        target= color
+
                     }
                 )
 
@@ -176,19 +186,19 @@ fun FixedAssetItem(item: FixedAssetUI
                 Icon(
                     imageVector = Icons.Outlined.WatchLater,
                     contentDescription = null,
-                    tint = EmeraldGreen,
+                    tint = target,
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Days Left: ${TimeUnit.MILLISECONDS.
                     toDays(item.dateMaturity - System.currentTimeMillis())}" ,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = MaterialTheme.typography.small,
+                    color = target
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = if(item.isCumulative){ "Compounding" }else {"Income"} ,
+                    text = if(item.isCumulative){ "COMPOUNDING" }else {"INCOME"} ,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -196,9 +206,9 @@ fun FixedAssetItem(item: FixedAssetUI
             }
             Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "status: ${(progress * 100f).toDouble().formats()}%" ,
+                    text = "${100 - (progress * 100f).roundToInt()}% left",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = target
                 )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -225,6 +235,22 @@ fun FixedAssetItem(item: FixedAssetUI
                     }
                 )
 
+            TextButton(
+                onClick = {
+                    onDelete()
+                },
+                modifier = Modifier.wrapContentSize().align(
+                    Alignment.End
+                )
+
+            ) {
+                Text(
+                    text = "Remove",
+                    style = MaterialTheme.typography.small,
+                    color = LossRed
+
+                )
+            }
 
         }
 

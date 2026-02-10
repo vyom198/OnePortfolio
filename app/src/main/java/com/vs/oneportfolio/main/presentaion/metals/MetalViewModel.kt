@@ -3,20 +3,27 @@ package com.vs.oneportfolio.main.presentaion.metals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vs.oneportfolio.core.database.metals.MetalDao
+import com.vs.oneportfolio.core.database.metals.history.SoldMetalDao
+import com.vs.oneportfolio.core.database.metals.history.SoldMetalEntity
 import com.vs.oneportfolio.main.presentaion.model.MetalUI
+import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateEvent
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MetalViewModel(
-    private val metalDao: MetalDao
+    private val metalDao: MetalDao,
+    private val soldMetalDao: SoldMetalDao
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
-
+    private val eventChannel = Channel<MetalEvent>()
+    val events = eventChannel.receiveAsFlow()
     private val _state = MutableStateFlow(MetalState())
     val state = _state
         .onStart {
@@ -71,7 +78,8 @@ class MetalViewModel(
             MetalAction.onDismiss -> {
                 _state.update {
                     it.copy(
-                        isAdding = false
+                        isAdding = false ,
+                        currentMetal = null
                     )
                 }
 
@@ -83,7 +91,8 @@ class MetalViewModel(
                     metalDao.insertMetal(item)
                     _state.update {
                         it.copy(
-                            isAdding = false
+                            isAdding = false ,
+                            currentMetal = null
                         )
                     }
                 }
@@ -97,6 +106,62 @@ class MetalViewModel(
                             isAdding = true
                         )
 
+                    }
+                }
+            }
+
+            MetalAction.OnDelete -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            isAdding = false,
+                            isDeleting = true
+                        )
+                    }
+                }
+            }
+            MetalAction.OnSold -> {
+               viewModelScope.launch {
+                   val item = _state.value.currentMetal
+                   val soldItem = SoldMetalEntity(
+                       label = item!!.label,
+                       weight = item.weight,
+                       unit = item.unit,
+                       karat = item.karat,
+                       currentPrice = item.currentPrice
+                   )
+                   soldMetalDao.insertSoldMetal(soldItem)
+                   metalDao.deleteMetalById(item!!.id)
+                   eventChannel.send(MetalEvent.SoldEvent)
+                   _state.update {
+                       it.copy(
+                           isAdding = false ,
+                           currentMetal = null
+                       )
+                   }
+               }
+            }
+
+            MetalAction.OnDeleteConfirm -> {
+                viewModelScope.launch {
+                    val item = _state.value.currentMetal
+                    metalDao.deleteMetalById(item!!.id)
+                    _state.update {
+                        it.copy(
+                            isDeleting = false ,
+                            currentMetal = null
+                        )
+                    }
+                }
+            }
+
+            MetalAction.OnCancelDelete -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                          isDeleting = false,
+                            currentMetal = null
+                        )
                     }
                 }
             }

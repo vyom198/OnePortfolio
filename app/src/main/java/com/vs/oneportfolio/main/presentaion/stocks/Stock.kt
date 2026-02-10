@@ -16,19 +16,27 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
+import com.vs.oneportfolio.main.presentaion.metals.components.bottomsheet.DeleteBottomSheet
+import com.vs.oneportfolio.main.presentaion.model.ObserveAsEvents
+import com.vs.oneportfolio.main.presentaion.stocks.components.EditDropDow
 import com.vs.oneportfolio.main.presentaion.stocks.components.bottomsheets.AddStockBottomSheet
 import com.vs.oneportfolio.main.presentaion.stocks.components.StockItem
 import com.vs.oneportfolio.main.presentaion.stocks.components.bottomsheets.UpdateStockItem
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -37,11 +45,24 @@ fun StockRoot(
     onBackClick: () -> Unit
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
-
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    ObserveAsEvents(viewModel.events) { event ->
+        when(event){
+            StockEven.onSold ->{
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Stock Moved to History"
+                    )
+                }
+            }
+        }
+    }
     StockScreen(
         state = state,
         onAction = viewModel::onAction,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -50,7 +71,8 @@ fun StockRoot(
 fun StockScreen(
     state: StockState,
     onAction: (StockAction) -> Unit,
-    onBackClick : () -> Unit
+    onBackClick : () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
         modifier = Modifier
@@ -61,6 +83,9 @@ fun StockScreen(
             .padding(
                 horizontal = 16.dp
             ),
+         snackbarHost = {
+             SnackbarHost(hostState = snackbarHostState)
+         },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -113,13 +138,37 @@ fun StockScreen(
             ) {
                 items(state.stocksList){ item->
                     StockItem(item,
-                        onAddShare = {
-                            onAction(StockAction.AddShare(it ))
-                        }
+                        onClickMenu = {
+                            onAction(StockAction.OnMenuClick(it ))
+                        },
+                        onEdit = {
+                            onAction(StockAction.onEditShareClick)
+                        },
+                        onDelete = {
+                            onAction(StockAction.onDelete)
+                        },
+                        onSold = {
+                            onAction(StockAction.onSoldClick)
+                        },
                     )
 
                 }
             }
+
+
+            if(
+                state.isDeleting
+            ) {
+                DeleteBottomSheet(
+                   onDismiss = {
+                       onAction(StockAction.onDeleteCancel)
+                   },
+                  OnDelete = {
+                      onAction(StockAction.onDeleteConfirm)
+                  }
+                )
+            }
+
             if(state.isAdding){
                 AddStockBottomSheet(
                     state = state,
@@ -153,7 +202,6 @@ fun StockScreen(
                             amt
                         ))
                     },
-
                     )
             }
 

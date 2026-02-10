@@ -11,5 +11,6 @@ data class StockState(
     val isAdding : Boolean = false,
     val selectedTicker : StockTicker? = null,
     val addingShare : Boolean = false ,
-    val currentUpdatingStock : StockUI? = null
+    val currentUpdatingStock : StockUI? = null,
+    val isDeleting : Boolean = false
 )

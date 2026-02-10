@@ -4,7 +4,9 @@ import com.vs.oneportfolio.main.presentaion.model.FixedAssetUI
 
 data class FixedAssetsState(
    val isAdding : Boolean = false,
-   val fixedAssets : List<FixedAssetUI> = emptyList()
+   val fixedAssets : List<FixedAssetUI> = emptyList(),
+   val isDeleting : Boolean = false,
+   val currentIem : FixedAssetUI? = null
 )
 
 
