@@ -12,5 +12,6 @@ data class CryptoState(
     val isAdding : Boolean = false,
     val selectedTicker : CoinMetadata? = null,
     val addingShare : Boolean = false,
-    val currentUpdatingCrypto : CryptoUI? = null
+    val currentUpdatingCrypto : CryptoUI? = null,
+    val isDeleting : Boolean = false
 )

@@ -16,11 +16,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,6 +32,11 @@ import com.vs.oneportfolio.core.theme.ui.topBarTitle
 import com.vs.oneportfolio.main.presentaion.crypto.components.bottomsheets.AddStockBottomSheet
 import com.vs.oneportfolio.main.presentaion.crypto.components.bottomsheets.UpdateStockItem
 import com.vs.oneportfolio.main.presentaion.crypto.components.items.CryptoItem
+import com.vs.oneportfolio.main.presentaion.metals.components.bottomsheet.DeleteBottomSheet
+import com.vs.oneportfolio.main.presentaion.model.ObserveAsEvents
+import com.vs.oneportfolio.main.presentaion.stocks.StockAction
+import com.vs.oneportfolio.main.presentaion.stocks.StockEven
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -36,11 +45,24 @@ fun CryptoRoot(
     onBackClick : () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    ObserveAsEvents(viewModel.event) { event ->
+        when(event){
+             CryptoEvent.onSold ->{
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Coin Moved to History"
+                    )
+                }
+            }
+        }
+    }
     CryptoScreen(
         state = state,
         onAction = viewModel::onAction,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -49,7 +71,8 @@ fun CryptoRoot(
 fun CryptoScreen(
     state: CryptoState,
     onAction: (CryptoAction) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
         modifier = Modifier
@@ -60,6 +83,9 @@ fun CryptoScreen(
             .padding(
                 horizontal = 16.dp
             ),
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -113,12 +139,31 @@ fun CryptoScreen(
                 items(state.cryptoList){ item->
                     CryptoItem (
                         item,
-                        onAddShare = {
-                            onAction(CryptoAction.AddShare( item))
-                        }
+                         onMenuClick = {
+                            onAction(CryptoAction.OnMenuClick( item))
+                        },
+                        onEdit = {
+                            onAction(CryptoAction.onEditShareClick)
+                        },
+                        onDelete = {
+                            onAction(CryptoAction.onDeleting)
+                        },
+                        onSold = {
+                            onAction(CryptoAction.onSoldClick)
+                        },
                     )
 
                 }
+            }
+            if(state.isDeleting){
+                DeleteBottomSheet(
+                    OnDelete = {
+                        onAction(CryptoAction.onDeleteConfirm)
+                    },
+                    onDismiss = {
+                        onAction(CryptoAction.onDeleteCancel)
+                    }
+                )
             }
             if(state.isAdding){
                 AddStockBottomSheet(
