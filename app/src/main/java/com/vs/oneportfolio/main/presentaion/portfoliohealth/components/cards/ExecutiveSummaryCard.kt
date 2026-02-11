@@ -36,31 +36,12 @@ fun ExecutiveSummaryCard(summary: String) {
             )
             
             Spacer(modifier = Modifier.height(8.dp))
-            
-            // Extract the most important sentence
-            val bottomLine = when {
-                summary.contains("urgent rebalancing", ignoreCase = true) -> 
-                    "⚠️ Urgent rebalancing needed: Reduce Bitcoin, buy ETFs and bonds."
-                summary.contains("extreme concentration", ignoreCase = true) -> 
-                    "⚠️ Extreme concentration in Bitcoin (60%) and Apple (25%)"
-                else -> summary.substring(0, minOf(120, summary.length)) + "..."
-            }
-            
+
+
             Text(
-                text = "\"$bottomLine\"",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(8.dp)
-            )
-            
-            Spacer(modifier = Modifier.height(4.dp))
-            
-            Text(
-                text = summary.take(150) + "...",
+                text = summary,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
         }

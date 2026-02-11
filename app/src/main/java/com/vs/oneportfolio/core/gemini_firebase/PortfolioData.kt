@@ -56,7 +56,7 @@ class GeminiInputData (
             Pair("Metals", metalDao.gettotalCurrentValueSnap())
         }
         val fixedIncomeDeferred = async {
-            Pair("Fixed Income Asset", fixedIncomeDao.getCurrentValueSnap())
+            Pair("Fixed Income ", fixedIncomeDao.getCurrentValueSnap())
         }
         val realEstateDeferred = async {
             Pair("Real Estate", realEstateDao.getTotalCurrentValueSnap())

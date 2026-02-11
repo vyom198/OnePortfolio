@@ -87,10 +87,9 @@ fun RiskFactorsCard(riskFactors: List<RiskFactor>) {
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = risk.description.take(80) + "...",
+                            text = risk.description,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
                     }

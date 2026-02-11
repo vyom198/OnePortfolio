@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vs.oneportfolio.core.gemini_firebase.ComprehensivePortfolioAnalysis
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.cards.AssetAllocationCard
-import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.cards.CriticalIssuesCard
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.cards.ExecutiveSummaryCard
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.cards.HealthScoreCard
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.cards.QuickActionsCard
@@ -32,12 +31,7 @@ fun PortfolioAnalysisContent(
         item {
             HealthScoreCard(analysis)
         }
-        
-        // 2. CRITICAL ISSUES (Top 3)
-        item {
-            CriticalIssuesCard(analysis)
-        }
-        
+
         // 3. QUICK ACTIONS (Top 3)
         item {
             QuickActionsCard(analysis.recommendations.immediateActions)

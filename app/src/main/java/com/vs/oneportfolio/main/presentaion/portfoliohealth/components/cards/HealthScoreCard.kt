@@ -96,10 +96,7 @@ fun HealthScoreCard(analysis: ComprehensivePortfolioAnalysis) {
             
             Spacer(modifier = Modifier.height(12.dp))
             
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+
                 Text(
                     text = "Diversification: ${analysis.diversificationAnalysis.diversificationScore}/100",
                     style = MaterialTheme.typography.bodySmall,
@@ -110,7 +107,7 @@ fun HealthScoreCard(analysis: ComprehensivePortfolioAnalysis) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
+
         }
     }
 }

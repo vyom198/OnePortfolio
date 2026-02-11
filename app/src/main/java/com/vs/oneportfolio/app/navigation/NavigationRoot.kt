@@ -12,6 +12,8 @@ import com.vs.oneportfolio.main.presentaion.home.HomeRoot
 import com.vs.oneportfolio.main.presentaion.metals.MetalRoot
 import com.vs.oneportfolio.main.presentaion.metals.history.SoldMetalRoot
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.PortfolioAnalysisRoot
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.detail.PortfolioSavedRoot
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.history.PortfolioHealthHistoryRoot
 import com.vs.oneportfolio.main.presentaion.realestate.RealRoot
 import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateRoot
 import com.vs.oneportfolio.main.presentaion.realestate.history.SoldEstateRoot
@@ -191,9 +193,35 @@ fun NavigationRoot(
             PortfolioAnalysisRoot(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onNavigateToHistory = {
+                     navController.navigate(AppRoute.PortfolioHistory){
+                         launchSingleTop = true
+                     }
                 }
+
             )
 
+        }
+        composable<AppRoute.PortfolioHistory> {
+            PortfolioHealthHistoryRoot(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNavigateToDetail = {
+                    navController.navigate(AppRoute.PortfolioSaved(it)){
+                        launchSingleTop = true
+
+                    }
+                }
+
+            )
+        }
+
+        composable<AppRoute.PortfolioSaved> {
+            PortfolioSavedRoot {
+                navController.popBackStack()
+            }
         }
     }
 }

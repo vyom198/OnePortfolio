@@ -1,5 +1,6 @@
 package com.vs.oneportfolio.main.presentaion.portfoliohealth.components.cards
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -7,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
@@ -24,6 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.vs.oneportfolio.core.gemini_firebase.RebalancingSuggestion
+import com.vs.oneportfolio.core.theme.ui.small
+import kotlin.math.roundToInt
 
 @Composable
 fun RebalancingCard(suggestions: List<RebalancingSuggestion>) {
@@ -43,15 +48,16 @@ fun RebalancingCard(suggestions: List<RebalancingSuggestion>) {
             
             Spacer(modifier = Modifier.height(12.dp))
             
-            suggestions.take(3).forEach { suggestion ->
+            suggestions.forEach { suggestion ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     // From
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(modifier = Modifier.wrapContentSize()) {
                         Text(
                             text = "FROM",
                             style = MaterialTheme.typography.labelSmall,
@@ -69,9 +75,9 @@ fun RebalancingCard(suggestions: List<RebalancingSuggestion>) {
                     // Amount
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "${suggestion.amountPercentage.toInt()}%",
+                            text = "${suggestion.amountPercentage.roundToInt()}%",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Medium,
                             color = Color(0xFFF44336)
                         )
                         Icon(
@@ -91,16 +97,19 @@ fun RebalancingCard(suggestions: List<RebalancingSuggestion>) {
                             textAlign = TextAlign.End
                         )
                         Text(
-                            text = suggestion.toAsset.split("(").first().take(15),
+                            text = suggestion.toAsset.split("(").first().takeLast(20),
                             style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 2,
                             fontWeight = FontWeight.Medium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
                             textAlign = TextAlign.End
                         )
                     }
                 }
-                
+                Text(
+                    text = suggestion.rationale,
+                    style = MaterialTheme.typography.small,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 if (suggestions.indexOf(suggestion) < suggestions.lastIndex) {
                     Divider(modifier = Modifier.padding(vertical = 4.dp))
                 }
