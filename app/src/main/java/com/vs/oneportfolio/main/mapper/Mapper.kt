@@ -1,20 +1,14 @@
 package com.vs.oneportfolio.main.mapper
 
-import android.os.Build
 import com.vs.oneportfolio.core.database.fixedincome.FixedIncomeEntity
 import com.vs.oneportfolio.core.database.fixedincome.history.MaturedFEntity
-import com.vs.oneportfolio.core.database.stocks.StocksEntity
-import com.vs.oneportfolio.core.gemini.StockTransaction
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.model.getPayOutFrequency
 import com.vs.oneportfolio.main.presentaion.model.FixedAssetUI
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import kotlin.time.Instant
 
 //fun StockTransaction.toEntity () : StocksEntity{
 //    return StocksEntity(

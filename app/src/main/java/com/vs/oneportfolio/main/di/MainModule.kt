@@ -1,6 +1,5 @@
 package com.vs.oneportfolio.main.di
 
-import com.vs.oneportfolio.core.gemini.StockRepository
 import com.vs.oneportfolio.main.data.fixedAsset.notification.FANotificationService
 import com.vs.oneportfolio.main.data.realestate.notification.RENotificationSerivice
 import com.vs.oneportfolio.main.domain.fixedAsset.notification.FANotification
@@ -12,6 +11,7 @@ import com.vs.oneportfolio.main.presentaion.fixedAssets.history.FixedHistoryView
 import com.vs.oneportfolio.main.presentaion.home.HomeViewModel
 import com.vs.oneportfolio.main.presentaion.metals.MetalViewModel
 import com.vs.oneportfolio.main.presentaion.metals.history.SoldMetalViewModel
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.PortfolioAnalysisViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.RealViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.history.SoldEstateViewModel
@@ -24,9 +24,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val mainModule = module {
-    single<StockRepository> {
-        StockRepository(get())
-    }
+
     viewModelOf(::HomeViewModel)
     viewModelOf(::StockViewModel)
     viewModelOf(::CryptoViewModel)
@@ -39,6 +37,7 @@ val mainModule = module {
     viewModelOf(::SoldMetalViewModel)
     viewModelOf(::SoldEstateViewModel)
     viewModelOf(::SoldStocksViewModel)
+    viewModelOf(::PortfolioAnalysisViewModel)
     singleOf(::FANotificationService) bind FANotification::class
     singleOf(::RENotificationSerivice) bind RENotification::class
 

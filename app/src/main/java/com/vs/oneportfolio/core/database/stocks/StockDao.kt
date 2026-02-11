@@ -16,6 +16,10 @@ interface StockDao {
     @Query("SELECT * FROM stocks")
     fun getAllStocks(): Flow<List<StocksEntity>>
 
+    @Query("SELECT * FROM stocks")
+    suspend fun getAllStocksSnap (): List<StocksEntity>
+
+
     @Query("DELETE FROM stocks WHERE id = :id")
     suspend fun deleteStock(id: Long)
 
@@ -26,6 +30,9 @@ interface StockDao {
 
     @Query("SELECT SUM(totalCurrentValue) FROM stocks")
     fun getTotalCurrentValue(): Flow<Double>
+
+    @Query("SELECT SUM(totalCurrentValue) FROM stocks")
+    fun getTotalCurrentValueSnap(): Double
 
     @Query("SELECT SUM(averagePrice) FROM stocks")
     fun getTotalInvested(): Flow<Double>

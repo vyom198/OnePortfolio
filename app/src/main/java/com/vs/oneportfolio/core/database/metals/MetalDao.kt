@@ -14,7 +14,8 @@ interface MetalDao {
 
     @Query("SELECT * FROM metals")
     fun getAllMetals(): Flow<List<MetalEntity>>
-
+    @Query("SELECT * FROM metals")
+    fun getAllMetalsSnap(): List<MetalEntity>
     @Query("SELECT * FROM metals WHERE id = :id")
     suspend fun getMetalById(id: Long): MetalEntity
 
@@ -33,7 +34,8 @@ interface MetalDao {
     @Query("UPDATE metals SET currentPrice = :currentPrice WHERE id = :id")
     suspend fun updateMetal(id: Long, currentPrice: Double)
 
-
+    @Query("SELECT SUM(currentPrice) FROM metals")
+    fun gettotalCurrentValueSnap():Double
 
 
 

@@ -47,7 +47,6 @@ import com.vs.oneportfolio.main.presentaion.metals.model.WeightUnitMapper
 import com.vs.oneportfolio.main.presentaion.metals.model.convertFromOz
 import com.vs.oneportfolio.main.presentaion.model.MetalUI
 import com.vs.oneportfolio.main.presentaion.stocks.components.InvestedAmt
-import de.charlex.compose.RevealSwipe
 
 @Composable
 fun MetalItem(item: MetalUI ,

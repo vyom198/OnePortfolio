@@ -14,6 +14,9 @@ interface CryptoDao {
     @Query("SELECT * FROM crypto")
     fun getAllCrypto(): Flow<List<CryptoEntity>>
 
+    @Query("SELECT * FROM crypto")
+    suspend fun getAllCryptoSnap(): List<CryptoEntity>
+
     @Query("DELETE FROM crypto WHERE id = :id")
     suspend fun deleteCrypto(id: Long)
 
@@ -21,7 +24,8 @@ interface CryptoDao {
 
     @Query("SELECT SUM(totalCurrentValue) FROM crypto")
     fun getTotalCurrentValue(): Flow<Double>
-
+    @Query("SELECT SUM(totalCurrentValue) FROM crypto")
+     suspend fun getTotalCurrentValueSnap(): Double
     @Query("SELECT SUM(averagePrice) FROM crypto")
     fun getTotalInvested(): Flow<Double>
 
