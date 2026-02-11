@@ -1,14 +1,22 @@
 package com.vs.oneportfolio.core.gemini_firebase
 
+
 import com.google.firebase.ai.FirebaseAI
 import com.google.firebase.ai.GenerativeModel
+import com.google.firebase.ai.type.FirebaseAIException
 import com.google.firebase.ai.type.Schema
 import com.google.firebase.ai.type.generationConfig
+import com.vs.oneportfolio.core.finnhubNetwork.util.Error
+import com.vs.oneportfolio.core.finnhubNetwork.util.FirebaseError
+import com.vs.oneportfolio.core.finnhubNetwork.util.Result
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 
 
 class PortfolioAnalyzer(
-    private val ai: FirebaseAI
+    private val ai: FirebaseAI ,
+    private val json: Json
 ) {
 
     companion object {
@@ -102,7 +110,7 @@ class PortfolioAnalyzer(
      */
     suspend fun analyzePortfolio(
         portfolioData: PortfolioInputData
-    ): Result<ComprehensivePortfolioAnalysis> {
+    ): Result<ComprehensivePortfolioAnalysis, FirebaseError> {
         return try {
             // Convert structured data to JSON string for the prompt
             val portfolioJson = Json.encodeToString(portfolioData)
@@ -112,10 +120,25 @@ class PortfolioAnalyzer(
             val response = modelWithSchema.generateContent(prompt)
             val jsonString = response.text ?: throw Exception("Empty response from AI")
 
-            val analysis = Json.decodeFromString<ComprehensivePortfolioAnalysis>(jsonString)
-            Result.success(analysis)
+            // Try to parse the JSON response
+            val analysis = try {
+                json.decodeFromString<ComprehensivePortfolioAnalysis>(jsonString)
+            } catch (e: SerializationException) {
+                // If direct parse fails, try to clean the JSON first
+                val cleanedJson = cleanJsonResponse(jsonString)
+                Json.decodeFromString<ComprehensivePortfolioAnalysis>(cleanedJson)
+            }
+
+            Result.Success(analysis)
+
+        } catch (e: FirebaseAIException) {
+            Timber.e(e, "FirebaseAIException")
+            Result.Error(FirebaseError.FIREBASEAIEXCEPTION)
+        } catch (e: SerializationException) {
+            Timber.e(e, "SerializationException")
+            Result.Error(FirebaseError.PARSING)
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.Error(FirebaseError.EMPTYRESPONSE)
         }
     }
 
@@ -293,5 +316,21 @@ Provide your complete analysis in the specified JSON schema format.
         return "$symbol${String.format("%,.2f", value)}"
     }
 }
-
+private fun cleanJsonResponse(rawResponse: String): String {
+    return rawResponse
+        // Remove markdown code blocks
+        .replace("```json", "")
+        .replace("```", "")
+        .trim()
+        // Remove any text before the first {
+        .substringAfter('{', rawResponse)
+        .let { if (it != rawResponse) "{${it.substringAfter('{')}" else it }
+        // Remove any text after the last }
+        .substringBeforeLast('}')
+        .let { "$it}" }
+        // Fix common JSON issues
+        .replace("\n", " ")
+        .replace("\\\"", "\"")
+        .replace("""\""", "")
+}
 // Response data classes

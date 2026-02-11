@@ -27,6 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.EmptyAnanlysisScreen
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.PortfolioAnalysisContent
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.PortfolioAnalysisLoadingView
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.PulseFAB
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -59,6 +63,11 @@ fun PortfolioAnalysisScreen(
             .padding(
                 horizontal = 16.dp
             ),
+        floatingActionButton = {
+            PulseFAB(
+                onClick = { onAction(PortfolioAnalysisAction.OnClickFab) }
+            )
+        },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -68,7 +77,7 @@ fun PortfolioAnalysisScreen(
                         modifier = Modifier
                             .size(24.dp)
                             .clickable {
-                               onBackClick()
+                                onBackClick()
                             },
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
@@ -77,8 +86,10 @@ fun PortfolioAnalysisScreen(
                     containerColor = MaterialTheme.colorScheme.background
                 ),
                 title = {
-                    Text("Portfolio Health",
-                        style = MaterialTheme.typography.topBarTitle)
+                    Text(
+                        "Portfolio Health",
+                        style = MaterialTheme.typography.topBarTitle
+                    )
 
                 }
             )
@@ -91,17 +102,17 @@ fun PortfolioAnalysisScreen(
                 .padding(paddingValues),
         ) {
 
+            if(state.loading){
+                PortfolioAnalysisLoadingView()
+            }
+            if (state.data == null) {
+               EmptyAnanlysisScreen()
+            }else{
+                PortfolioAnalysisContent(state.data)
+            }
         }
     }
 }
 
-//@Preview
-//@Composable
-//private fun Preview() {
-//    OnePortfolioTheme {
-//        PortfolioAnalysisScreen(
-//            state = PortfolioAnalysisState(),
-//            onAction = {}
-//        )
-//    }
-//}
+
+
