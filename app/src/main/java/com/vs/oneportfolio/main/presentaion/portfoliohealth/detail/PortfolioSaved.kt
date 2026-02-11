@@ -1,15 +1,12 @@
-package com.vs.oneportfolio.main.presentaion.portfoliohealth
+package com.vs.oneportfolio.main.presentaion.portfoliohealth.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,35 +24,31 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vs.oneportfolio.core.theme.ui.topBarTitle
-import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.EmptyAnanlysisScreen
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.PortfolioAnalysisAction
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.PortfolioAnalysisContent
-import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.PortfolioAnalysisLoadingView
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.components.PulseFAB
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun PortfolioAnalysisRoot(
-    viewModel: PortfolioAnalysisViewModel = koinViewModel(),
-    onBackClick : () -> Unit,
-    onNavigateToHistory : () -> Unit
+fun PortfolioSavedRoot(
+    viewModel: PortfolioSavedViewModel = koinViewModel(),
+    onBackClick : () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    PortfolioAnalysisScreen(
+    PortfolioSavedScreen(
         state = state,
         onAction = viewModel::onAction,
-        onBackClick = onBackClick,
-        onNavigateToHistory = onNavigateToHistory
+        onBackClick = onBackClick
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PortfolioAnalysisScreen(
-    state: PortfolioAnalysisState,
-    onAction: (PortfolioAnalysisAction) -> Unit,
-    onBackClick : () -> Unit,
-    onNavigateToHistory : () -> Unit
+fun PortfolioSavedScreen(
+    state: PortfolioSavedState,
+    onAction: (PortfolioSavedAction) -> Unit,
+    onBackClick: () -> Unit
 ) {
     Scaffold(
         modifier = Modifier
@@ -66,14 +59,6 @@ fun PortfolioAnalysisScreen(
             .padding(
                 horizontal = 16.dp
             ),
-        floatingActionButton = {
-            if(!state.loading){
-                PulseFAB(
-                    onClick = { onAction(PortfolioAnalysisAction.OnClickFab) }
-                )
-            }
-
-        },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -91,19 +76,9 @@ fun PortfolioAnalysisScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 ),
-                actions = {
-                    Icon(
-                        imageVector = Icons.Filled.History,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(24.dp).clickable{
-                            onNavigateToHistory()
-                        }
-                    )
-                },
                 title = {
                     Text(
-                        "Portfolio Health",
+                        "Detail",
                         style = MaterialTheme.typography.topBarTitle
                     )
 
@@ -117,18 +92,9 @@ fun PortfolioAnalysisScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-
-            if(state.loading){
-                PortfolioAnalysisLoadingView()
-            }
-            if (state.data == null) {
-               EmptyAnanlysisScreen()
-            }else{
-                PortfolioAnalysisContent(state.data)
-            }
+            state.item?.let { PortfolioAnalysisContent(it) }
         }
     }
+
 }
-
-
 

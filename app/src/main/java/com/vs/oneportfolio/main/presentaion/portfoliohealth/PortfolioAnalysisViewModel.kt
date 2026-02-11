@@ -2,6 +2,8 @@ package com.vs.oneportfolio.main.presentaion.portfoliohealth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vs.oneportfolio.core.database.portfoliohealth.PortfolioHealthDao
+import com.vs.oneportfolio.core.database.portfoliohealth.PortfolioHealthEntity
 import com.vs.oneportfolio.core.gemini_firebase.GeminiData
 import com.vs.oneportfolio.core.gemini_firebase.GeminiInputData
 import com.vs.oneportfolio.core.gemini_firebase.PortfolioAnalyzer
@@ -18,7 +20,8 @@ import kotlinx.coroutines.flow.update
 
 class PortfolioAnalysisViewModel(
     private val portfolioAnalyzer: PortfolioAnalyzer,
-    private val inputData: GeminiData
+    private val inputData: GeminiData,
+    private val portfolioHealthDao: PortfolioHealthDao
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -68,6 +71,18 @@ class PortfolioAnalysisViewModel(
                                 data = analysis
                             )
                         }
+                        val analysisItem = PortfolioHealthEntity(
+                            healthScore = analysis.healthScore,
+                            overallRating = analysis.overallRating,
+                            riskLevel = analysis.riskLevel,
+                            diversificationAnalysis = analysis.diversificationAnalysis,
+                            riskAnalysis = analysis.riskAnalysis,
+                            recommendations = analysis.recommendations,
+                            performanceInsights = analysis.performanceInsights,
+                            executiveSummary = analysis.executiveSummary
+                        )
+                        portfolioHealthDao.insertPortfolioAnalysis(analysisItem)
+
                     }
 
                     is Result.Error -> {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.vs.oneportfolio.core.gemini_firebase.SectorConcentration
+import com.vs.oneportfolio.core.theme.ui.names
 
 @Composable
 fun SectorConcentrationCard(sectorConcentration: SectorConcentration) {
@@ -45,21 +47,21 @@ fun SectorConcentrationCard(sectorConcentration: SectorConcentration) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .wrapContentHeight()
                         .padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = sector.sector,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium
+                        style = MaterialTheme.typography.names,
+                        modifier = Modifier.weight(0.2f)
                     )
                     
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = "${sector.percentage.toInt()}%",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Medium,
                             color = Color(0xFFF44336)
                         )
                         
@@ -77,7 +79,7 @@ fun SectorConcentrationCard(sectorConcentration: SectorConcentration) {
                                 text = sector.riskLevel,
                                 style = MaterialTheme.typography.labelSmall,
                                 color = getRiskColor(sector.riskLevel),
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Medium
                             )
                         }
                     }
@@ -87,10 +89,9 @@ fun SectorConcentrationCard(sectorConcentration: SectorConcentration) {
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = sectorConcentration.concentrationRisk.take(120) + "...",
+                text = sectorConcentration.concentrationRisk,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
         }

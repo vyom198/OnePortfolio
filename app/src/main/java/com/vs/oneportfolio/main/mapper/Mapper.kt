@@ -2,6 +2,8 @@ package com.vs.oneportfolio.main.mapper
 
 import com.vs.oneportfolio.core.database.fixedincome.FixedIncomeEntity
 import com.vs.oneportfolio.core.database.fixedincome.history.MaturedFEntity
+import com.vs.oneportfolio.core.database.portfoliohealth.PortfolioHealthEntity
+import com.vs.oneportfolio.core.gemini_firebase.ComprehensivePortfolioAnalysis
 import com.vs.oneportfolio.main.presentaion.fixedAssets.components.model.getPayOutFrequency
 import com.vs.oneportfolio.main.presentaion.model.FixedAssetUI
 import java.text.NumberFormat
@@ -79,5 +81,20 @@ fun FixedIncomeEntity.toMatured () : MaturedFEntity{
         currentValue = currentValue,
         dateOpened = dateOpened,
         dateMaturity = dateMaturity
+    )
+}
+
+
+fun PortfolioHealthEntity.toUI () : ComprehensivePortfolioAnalysis{
+    return ComprehensivePortfolioAnalysis(
+        healthScore = healthScore,
+        overallRating = overallRating,
+        riskLevel = riskLevel,
+        diversificationAnalysis = diversificationAnalysis,
+        riskAnalysis = riskAnalysis,
+        recommendations = recommendations,
+        performanceInsights = performanceInsights,
+        executiveSummary = executiveSummary
+
     )
 }

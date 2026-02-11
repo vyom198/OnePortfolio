@@ -33,6 +33,8 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.ui.Alignment
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.text.font.FontFamily
+ import androidx.compose.ui.text.font.FontStyle
  import androidx.compose.ui.text.font.FontWeight
  import androidx.compose.ui.unit.dp
  import androidx.compose.ui.unit.sp
@@ -100,17 +102,7 @@ fun HomeScreen(
                     )
                 },
                 actions = {
-                    Icon(
-                        imageVector = Icons.Default.Analytics,
-                        contentDescription = null,
-                        modifier = Modifier.size(
-                            34.dp
-                        ).clickable{
-                            onNavigateToPortfolioHealth()
-                        },
-                        tint = MaterialTheme.colorScheme.onPrimary
 
-                    )
                 }
 
             )
@@ -131,7 +123,9 @@ fun HomeScreen(
                 ).padding(
                     horizontal = 16.dp,
                     vertical = 16.dp
-                ),
+                ).clickable{
+                    onAction(HomeAction.OnCardClick)
+                },
                  verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
 
@@ -189,6 +183,33 @@ fun HomeScreen(
 
                     )
                 )
+                if(state.cardClick){
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Get AI Generated Risk Analysis & Diversification Suggestions",
+                            style = MaterialTheme.typography.normal.copy(
+                                fontStyle = FontStyle.Italic,
+                                fontSize = 14.sp
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowRight,
+                            modifier = Modifier.size(
+                                32.dp
+                            ).clickable {
+                                onNavigateToPortfolioHealth()
+                            },
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+
+                        )
+                    }
+                }
 
             }
 

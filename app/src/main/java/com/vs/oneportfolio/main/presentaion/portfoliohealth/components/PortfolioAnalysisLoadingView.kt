@@ -74,11 +74,10 @@ fun PortfolioAnalysisLoadingView(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
             .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier.weight(1f))
-        
-        // AI Avatar/Icon
+
         Box(
             modifier = Modifier
                 .size(96.dp)
@@ -143,7 +142,7 @@ fun PortfolioAnalysisLoadingView(modifier: Modifier = Modifier) {
             )
         }
         
-        Spacer(modifier = Modifier.weight(1f))
+       Spacer(modifier = Modifier.height(30.dp))
         
         // Tip of the day
         Card(

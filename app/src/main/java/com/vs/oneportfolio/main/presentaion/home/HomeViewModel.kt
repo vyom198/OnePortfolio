@@ -204,8 +204,14 @@ class HomeViewModel(
 
         fun onAction(action: HomeAction) {
             when(action) {
+                HomeAction.OnCardClick -> {
+                    _state.update {
+                        it.copy(
+                            cardClick = !it.cardClick
+                        )
+                    }
 
-                else -> {}
+                }
             }
         }
 

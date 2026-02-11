@@ -2,6 +2,7 @@ package com.vs.oneportfolio.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.vs.oneportfolio.core.database.crypto.CryptoDao
 import com.vs.oneportfolio.core.database.crypto.CryptoEntity
 import com.vs.oneportfolio.core.database.crypto.history.SoldCrypto
@@ -14,6 +15,9 @@ import com.vs.oneportfolio.core.database.metals.MetalDao
 import com.vs.oneportfolio.core.database.metals.MetalEntity
 import com.vs.oneportfolio.core.database.metals.history.SoldMetalDao
 import com.vs.oneportfolio.core.database.metals.history.SoldMetalEntity
+import com.vs.oneportfolio.core.database.portfoliohealth.PortfolioAnalysisConverters
+import com.vs.oneportfolio.core.database.portfoliohealth.PortfolioHealthDao
+import com.vs.oneportfolio.core.database.portfoliohealth.PortfolioHealthEntity
 import com.vs.oneportfolio.core.database.realestate.RealEstateDao
 import com.vs.oneportfolio.core.database.realestate.RealEstateEntity
 import com.vs.oneportfolio.core.database.realestate.history.SoldEstateDao
@@ -27,10 +31,12 @@ import com.vs.oneportfolio.core.database.stocks.history.SoldStockEntity
     entities = [StocksEntity::class , CryptoEntity::class ,
                 FixedIncomeEntity::class, MaturedFEntity::class , RealEstateEntity::class,
                MetalEntity::class, SoldMetalEntity::class ,
-        SoldEstateEntity :: class, SoldCrypto::class , SoldStockEntity::class
+        SoldEstateEntity :: class, SoldCrypto::class , SoldStockEntity::class,
+        PortfolioHealthEntity::class
                ],
-    version = 11,
+    version = 12,
 )
+@TypeConverters(PortfolioAnalysisConverters::class)
 abstract class PortfolioDatabase : RoomDatabase() {
      abstract val stockDao : StockDao
      abstract val cryptoDao : CryptoDao
@@ -47,6 +53,9 @@ abstract class PortfolioDatabase : RoomDatabase() {
      abstract val soldEstateDao : SoldEstateDao
      abstract val soldCryptoDao : SoldCryptoDao
      abstract val soldStockDao : SoldStockDao
+
+     abstract val portfolioHealthDao : PortfolioHealthDao
+
 
 
 }

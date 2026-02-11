@@ -80,10 +80,9 @@ fun QuickActionsCard(actions: List<ImmediateAction>) {
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                text = action.reason.take(80) + "...",
+                                text = action.reason,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 2,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }

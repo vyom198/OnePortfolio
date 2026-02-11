@@ -43,7 +43,11 @@ sealed interface AppRoute {
     @Serializable
     object PortfolioAnalysis : AppRoute
 
+    @Serializable
+    object PortfolioHistory : AppRoute
 
+    @Serializable
+     data class PortfolioSaved(val id : Long) : AppRoute
 
 
 

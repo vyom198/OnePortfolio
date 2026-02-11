@@ -76,7 +76,6 @@ fun StrengthsWeaknessesCard(insights: PerformanceInsights) {
                     Text(
                         text = strength,
                         style = MaterialTheme.typography.bodySmall,
-                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
                     )
@@ -119,7 +118,6 @@ fun StrengthsWeaknessesCard(insights: PerformanceInsights) {
                     Text(
                         text = weakness,
                         style = MaterialTheme.typography.bodySmall,
-                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
                     )

@@ -12,6 +12,8 @@ import com.vs.oneportfolio.main.presentaion.home.HomeViewModel
 import com.vs.oneportfolio.main.presentaion.metals.MetalViewModel
 import com.vs.oneportfolio.main.presentaion.metals.history.SoldMetalViewModel
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.PortfolioAnalysisViewModel
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.detail.PortfolioSavedViewModel
+import com.vs.oneportfolio.main.presentaion.portfoliohealth.history.PortfolioHealthHistoryViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.RealViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.addrealEstate.AddEstateViewModel
 import com.vs.oneportfolio.main.presentaion.realestate.history.SoldEstateViewModel
@@ -38,6 +40,8 @@ val mainModule = module {
     viewModelOf(::SoldEstateViewModel)
     viewModelOf(::SoldStocksViewModel)
     viewModelOf(::PortfolioAnalysisViewModel)
+    viewModelOf(::PortfolioHealthHistoryViewModel)
+    viewModelOf(::PortfolioSavedViewModel)
     singleOf(::FANotificationService) bind FANotification::class
     singleOf(::RENotificationSerivice) bind RENotification::class
 

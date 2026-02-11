@@ -22,6 +22,7 @@ fun Chip(text: String, color: Color) {
     ) {
         Text(
             text = text,
+            maxLines = 1,
             style = MaterialTheme.typography.labelSmall,
             color = color,
             fontWeight = FontWeight.Medium
