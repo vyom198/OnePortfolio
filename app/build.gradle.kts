@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    id("com.google.gms.google-services")
 }
 room {
     schemaDirectory("$projectDir/schemas")
@@ -82,7 +83,6 @@ dependencies {
 
     // DI - Koin
     implementation(libs.bundles.koin)
-    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     // Navigation
     implementation(libs.androidx.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
@@ -99,12 +99,15 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.kotlin.client)
-
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiation)
-    implementation("de.charlex.compose:revealswipe:3.1.0-rc02")
+    implementation(libs.firebase.ai)
+    implementation(libs.purchases)
+    implementation(libs.purchases.store.amazon)
     implementation(libs.ktor.client.okhttp)
-    //implementation(libs.ktor.client.android)
+
 }

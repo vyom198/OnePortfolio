@@ -17,6 +17,8 @@ interface RealEstateDao {
 
     @Query("SELECT * FROM realestate")
      fun getAllRealEstates(): Flow<List<RealEstateEntity>>
+    @Query("SELECT * FROM realestate")
+    fun getAllRealEstatesSnap(): List<RealEstateEntity>
 
     @Query("DELETE FROM realestate WHERE id = :id")
     suspend fun deleteRealEstateById(id: Int)
@@ -29,7 +31,8 @@ interface RealEstateDao {
 
     @Query("SELECT SUM(currentMarketValue) FROM realestate")
     fun getTotalCurrentValue(): Flow<Double>
-
+    @Query("SELECT SUM(currentMarketValue) FROM realestate")
+    fun getTotalCurrentValueSnap(): Double
     @Query("SELECT SUM(purchasePrice) FROM realestate")
     fun getTotalInvested(): Flow<Double>
 

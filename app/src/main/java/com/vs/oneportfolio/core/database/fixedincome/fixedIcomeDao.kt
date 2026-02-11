@@ -22,6 +22,8 @@ interface FixedIcomeDao {
     @Query("SELECT * FROM fixed_deposits")
     fun getAllFixedIncome(): Flow<List<FixedIncomeEntity>>
 
+    @Query("SELECT * FROM fixed_deposits")
+    fun getAllFixedIncomeSnap(): List<FixedIncomeEntity>
     @Query("SELECT SUM(amtPrincipal) FROM fixed_deposits")
     fun getTotalInvested(): Flow<Double>
 
@@ -30,7 +32,8 @@ interface FixedIcomeDao {
 
     @Query("SELECT SUM(currentValue) FROM fixed_deposits")
     fun getCurrentValue(): Flow<Double>
-
+    @Query("SELECT SUM(currentValue) FROM fixed_deposits")
+    suspend fun getCurrentValueSnap(): Double
     @Query("UPDATE fixed_deposits SET notifyOnInterestCredit = :enabled WHERE id = :id")
     suspend fun updatePaymentNotify(id: Int, enabled: Boolean)
 

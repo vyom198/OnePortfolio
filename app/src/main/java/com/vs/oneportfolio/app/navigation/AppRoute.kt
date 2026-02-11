@@ -40,6 +40,9 @@ sealed interface AppRoute {
     @Serializable
     object SoldFixedAsset : AppRoute
 
+    @Serializable
+    object PortfolioAnalysis : AppRoute
+
 
 
 

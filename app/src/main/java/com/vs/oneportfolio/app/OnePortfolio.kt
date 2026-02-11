@@ -9,18 +9,17 @@ import com.vs.oneportfolio.BuildConfig
 import com.vs.oneportfolio.app.di.appModule
 import com.vs.oneportfolio.core.database.crypto.CryptoDao
 import com.vs.oneportfolio.core.database.di.databaseModule
-import com.vs.oneportfolio.core.database.fixedincome.FixedIcomeDao
 import com.vs.oneportfolio.core.database.metals.MetalDao
 import com.vs.oneportfolio.core.database.metals.getKaratFactor
 import com.vs.oneportfolio.core.database.stocks.StockDao
 import com.vs.oneportfolio.core.finnhubNetwork.FinnHubManager
 import com.vs.oneportfolio.core.finnhubNetwork.di.networkModule
 import com.vs.oneportfolio.core.finnhubNetwork.util.Result
-import com.vs.oneportfolio.core.gemini.geminiModule
 import com.vs.oneportfolio.core.socket.socketModule
 import com.vs.oneportfolio.main.data.fixedAsset.notification.FANotificationService
 import com.vs.oneportfolio.main.data.realestate.notification.RENotificationSerivice
 import com.vs.oneportfolio.main.di.mainModule
+import geminiModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -51,9 +50,9 @@ class OnePortfolio : Application() {
                 appModule,
                 mainModule,
                 databaseModule,
-                geminiModule,
                 socketModule ,
-                networkModule
+                networkModule,
+                geminiModule
 
             )
         }
