@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.vs.oneportfolio.core.finnhubNetwork.util.Result
+import kotlinx.coroutines.flow.update
 
 class PortfolioAnalysisViewModel(
     private val portfolioAnalyzer: PortfolioAnalyzer,
@@ -35,28 +37,61 @@ class PortfolioAnalysisViewModel(
             initialValue = PortfolioAnalysisState()
         )
 
-    init {
-        getAnalysis()
-    }
-    private fun getAnalysis (){
+
+    private fun getAnalysis() {
         viewModelScope.launch {
-            val totalcurrentValue = inputData.getTotalporfolioValue()
-            val getAssetClass = inputData.getAssetAllocation()
-            val input = PortfolioInputData(
-                assets = getAssetClass,
-                currency = "USD",
-                userContext = UserContext(),
-                totalCurrentValue = totalcurrentValue
-            )
-            val analysis = portfolioAnalyzer.analyzePortfolio(
-                portfolioData = input
-            )
-            Timber.i("result : $analysis")
+            _state.update { it.copy(loading = true) }
+            try {
+                val totalCurrentValue = inputData.getTotalporfolioValue()
+                val assetAllocation = inputData.getAssetAllocation()
+
+                val input = PortfolioInputData(
+                    assets = assetAllocation,
+                    currency = "USD",
+                    userContext = UserContext(),
+                    totalCurrentValue = totalCurrentValue
+                )
+
+                Timber.d("📊 Calling Gemini with portfolio value: $totalCurrentValue")
+
+                val result = portfolioAnalyzer.analyzePortfolio(portfolioData = input)
+
+                // Properly handle the Result<T>
+                when (result) {
+                    is  Result.Success-> {
+                        val analysis = result.data
+                        Timber.i("✅ SUCCESS: Got analysis with health score ${result.data}")
+                        _state.update {
+                            it.copy(
+                                loading = false,
+                                error = null,
+                                data = analysis
+                            )
+                        }
+                    }
+
+                    is Result.Error -> {
+                        val exception = result.error
+                        Timber.e("❌ ERROR: $exception")
+                        _state.update {
+                            it.copy(
+                                loading = false,
+                                error = exception.toString(),
+                                data = null
+                            )
+                        }
+                    }
+                }
+
+            } catch (e: Exception) {
+                Timber.e(e, "🔥 Unexpected error in getAnalysis")
+
+            }
         }
     }
     fun onAction(action: PortfolioAnalysisAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            PortfolioAnalysisAction.OnClickFab -> getAnalysis()
         }
     }
 

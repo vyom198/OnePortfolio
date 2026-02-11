@@ -1,6 +1,9 @@
 package com.vs.oneportfolio.main.presentaion.portfoliohealth
 
+import com.vs.oneportfolio.core.gemini_firebase.ComprehensivePortfolioAnalysis
+
 data class PortfolioAnalysisState(
-    val paramOne: String = "default",
-    val paramTwo: List<String> = emptyList(),
+   val loading: Boolean = false,
+    val error : String? = null,
+    val data : ComprehensivePortfolioAnalysis? = null
 )

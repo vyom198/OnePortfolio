@@ -10,6 +10,6 @@ import org.koin.dsl.module
 
 val geminiModule  = module{
     single { Firebase.ai(backend = GenerativeBackend.googleAI()) }
-    single { PortfolioAnalyzer(get()) }
+    single { PortfolioAnalyzer(ai = get(), json = get()) }
      singleOf(::GeminiInputData) bind  GeminiData::class
 }
