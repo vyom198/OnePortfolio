@@ -110,4 +110,6 @@ dependencies {
     implementation(libs.purchases.store.amazon)
     implementation(libs.ktor.client.okhttp)
    implementation(libs.androidx.datastore.preferences)
+    implementation("io.insert-koin:koin-androidx-workmanager:3.5.0")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }
