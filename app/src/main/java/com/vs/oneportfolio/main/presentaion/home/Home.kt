@@ -33,6 +33,9 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.material3.TopAppBarDefaults
  import androidx.compose.runtime.Composable
  import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
  import androidx.compose.ui.Alignment
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.draw.clip
@@ -45,6 +48,11 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.ui.unit.dp
  import androidx.compose.ui.unit.sp
  import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import com.revenuecat.purchases.CustomerInfo
+ import com.revenuecat.purchases.models.StoreTransaction
+ import com.revenuecat.purchases.ui.revenuecatui.PaywallDialog
+ import com.revenuecat.purchases.ui.revenuecatui.PaywallDialogOptions
+ import com.revenuecat.purchases.ui.revenuecatui.PaywallListener
  import com.vs.oneportfolio.R
  import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
  import com.vs.oneportfolio.core.theme.ui.LossRed
@@ -93,7 +101,7 @@ fun HomeScreen(
     onNavigateToMetal : () -> Unit,
     onNavigateToPortfolioHealth : () -> Unit
 ) {
-
+    var showPaywall by remember { mutableStateOf(false) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -257,7 +265,8 @@ fun HomeScreen(
                                 modifier = Modifier.size(
                                     32.dp
                                 ).clickable {
-                                    onNavigateToPortfolioHealth()
+                                    showPaywall = true
+                                    //onNavigateToPortfolioHealth()
                                 },
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimary
@@ -267,7 +276,35 @@ fun HomeScreen(
                     }
                 }
 
+                if (showPaywall) {
+                    PaywallDialog(
+                        PaywallDialogOptions.Builder()
+                            // This ensures the paywall only shows if they DON'T have the entitlement
+                            .setRequiredEntitlementIdentifier("your_entitlement_id")
+                            .setListener(
+                                object : PaywallListener {
+                                    override fun onPurchaseCompleted(customerInfo: CustomerInfo, storeTransaction: StoreTransaction) {
+                                        showPaywall = false
+                                        // 4. Navigate to the feature AFTER successful "fake" or real payment
+                                        onNavigateToPortfolioHealth()
+                                    }
+                                    override fun onRestoreCompleted(customerInfo: CustomerInfo) {
+                                        if (customerInfo.entitlements["your_entitlement_id"]?.isActive == true) {
+                                            showPaywall = false
+                                            onNavigateToPortfolioHealth()
+                                        }
+                                    }
 
+                                    override fun onPurchaseCancelled() {
+                                        super.onPurchaseCancelled()
+                                        showPaywall = false
+                                    }
+
+                                }
+                            )
+                            .build()
+                    )
+                }
 
             }
 

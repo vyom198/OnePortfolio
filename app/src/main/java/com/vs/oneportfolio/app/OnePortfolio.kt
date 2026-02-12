@@ -5,6 +5,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import com.revenuecat.purchases.LogLevel
+import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.PurchasesConfiguration
 import com.vs.oneportfolio.BuildConfig
 import com.vs.oneportfolio.app.di.appModule
 import com.vs.oneportfolio.core.database.crypto.CryptoDao
@@ -43,6 +46,8 @@ class OnePortfolio : Application() {
     private val cryptoDao : CryptoDao by inject()
     override fun onCreate() {
         super.onCreate()
+        Purchases.logLevel = LogLevel.DEBUG
+        Purchases.configure(PurchasesConfiguration.Builder(this, BuildConfig.REVENUE_CAT).build())
         if(BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
         startKoin {
             androidContext(this@OnePortfolio)

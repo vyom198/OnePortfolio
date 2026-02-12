@@ -32,14 +32,16 @@ android {
         val apiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
         val finKey = localProperties.getProperty("FINNHUB_API_KEY") ?: ""
         val cmcKey = localProperties.getProperty("X-CMC_PRO_API_KEY") ?: ""
+        val revenue= localProperties.getProperty("RevenueCat") ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$apiKey\"")
         buildConfigField("String", "FINNHUB_API_KEY", "\"$finKey\"")
         buildConfigField("String", "X_CMC_PRO_API_KEY", "\"$cmcKey\"")
+        buildConfigField("String", "REVENUE_CAT", "\"$revenue\"")
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -97,7 +99,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.material.icons.extended)
-
+    implementation("com.revenuecat.purchases:purchases-ui:8.2.0")
     implementation(libs.kotlin.client)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
