@@ -157,7 +157,10 @@ fun AssetAllocationRow(asset: AssetClassBreakdown) {
             // Current allocation bar
             Box(
                 modifier = Modifier
-                    .weight(asset.currentPercentage.toFloat())
+                    .fillMaxWidth(  if (asset.currentPercentage > 0)
+                        asset.currentPercentage.toFloat()
+                    else
+                        0.00f )
                     .height(6.dp)
                     .background(
                         color = when {
@@ -174,7 +177,7 @@ fun AssetAllocationRow(asset: AssetClassBreakdown) {
             // Target allocation bar
             Box(
                 modifier = Modifier
-                    .weight(asset.recommendedPercentage.toFloat())
+                    .fillMaxWidth(asset.recommendedPercentage.toFloat())
                     .height(6.dp)
                     .background(
                         color = MaterialTheme.colorScheme.background.copy(alpha = 0.3f),

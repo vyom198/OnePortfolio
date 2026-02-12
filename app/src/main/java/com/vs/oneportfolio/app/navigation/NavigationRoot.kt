@@ -11,6 +11,7 @@ import com.vs.oneportfolio.main.presentaion.fixedAssets.history.FixedHistoryRoot
 import com.vs.oneportfolio.main.presentaion.home.HomeRoot
 import com.vs.oneportfolio.main.presentaion.metals.MetalRoot
 import com.vs.oneportfolio.main.presentaion.metals.history.SoldMetalRoot
+import com.vs.oneportfolio.main.presentaion.permission.PermissionRoot
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.PortfolioAnalysisRoot
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.detail.PortfolioSavedRoot
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.history.PortfolioHealthHistoryRoot
@@ -23,13 +24,24 @@ import com.vs.oneportfolio.main.presentaion.stocks.history.SoldStocksRoot
 @Composable
 fun NavigationRoot(
     navController: NavHostController,
+    isPermissionAlreadyGranted: Boolean
 ) {
 
     NavHost(
         navController = navController,
-        startDestination = AppRoute.Home,
+        startDestination = if(isPermissionAlreadyGranted)AppRoute.Home else AppRoute.Permission,
 
     ) {
+        composable<AppRoute.Permission> {
+            PermissionRoot{
+                navController.navigate(AppRoute.Home){
+                    popUpTo(AppRoute.Permission){
+                        inclusive = true
+                    }
+                }
+            }
+        }
+
         composable<AppRoute.Home> {
             HomeRoot(
                 onNavigateToStock = {

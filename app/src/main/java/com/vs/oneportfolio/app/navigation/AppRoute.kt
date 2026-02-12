@@ -50,6 +50,11 @@ sealed interface AppRoute {
      data class PortfolioSaved(val id : Long) : AppRoute
 
 
+    @Serializable
+    object Permission : AppRoute
+
+
+
 
 }
 

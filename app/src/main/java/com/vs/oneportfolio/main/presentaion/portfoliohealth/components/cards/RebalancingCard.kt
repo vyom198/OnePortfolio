@@ -97,7 +97,7 @@ fun RebalancingCard(suggestions: List<RebalancingSuggestion>) {
                             textAlign = TextAlign.End
                         )
                         Text(
-                            text = suggestion.toAsset.split("(").first().takeLast(20),
+                            text = suggestion.toAsset.split("(").first().takeLast(13).removePrefix("d"),
                             style = MaterialTheme.typography.bodyMedium,
                             maxLines = 2,
                             fontWeight = FontWeight.Medium,

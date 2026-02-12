@@ -174,16 +174,16 @@ fun PortfolioHistoryItem(item: PortfolioHealthEntity,
             ) {
             Text(
                 text = "Health Score: ",
-                style = MaterialTheme.typography.names,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
                 text = "${item.healthScore}/100",
-                style = MaterialTheme.typography.names,
+                style = MaterialTheme.typography.small,
                 color = MaterialTheme.colorScheme.onPrimary,
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Row(
             modifier = Modifier.wrapContentWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -191,7 +191,7 @@ fun PortfolioHistoryItem(item: PortfolioHealthEntity,
             ) {
             Text(
                 text = "Overall Rating: ",
-                style = MaterialTheme.typography.names,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
@@ -208,7 +208,7 @@ fun PortfolioHistoryItem(item: PortfolioHealthEntity,
             ) {
                 Text(
                     text = "Generated On: ",
-                    style = MaterialTheme.typography.small,
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
