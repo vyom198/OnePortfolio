@@ -204,7 +204,7 @@ data class HoldingData(
 @Serializable
 data class UserContext(
     @SerialName("age")
-    val age: Int? = 23,
+    val age: Int? = null,
 
     @SerialName("risk_tolerance")
     val riskTolerance: String? = "Moderate", // "Low", "Moderate", "High"

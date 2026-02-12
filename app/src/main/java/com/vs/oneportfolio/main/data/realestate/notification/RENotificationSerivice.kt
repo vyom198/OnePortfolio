@@ -36,7 +36,7 @@ class RENotificationSerivice(
         )
 
         val notification = NotificationCompat.Builder(context, RE_CHANNEL_ID)
-            .setSmallIcon(R.drawable.sack_dollar)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(name)
             .setContentText("Congrats! Now your property is worth increased from $oldMoney to $newMoney")
             .setContentIntent(activityPendingIntent)
@@ -69,7 +69,7 @@ class RENotificationSerivice(
         )
 
         val notification = NotificationCompat.Builder(context, RE_CHANNEL_ID)
-            .setSmallIcon(R.drawable.sack_dollar)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(name)
             .setContentText("collect your rent of $money")
             .setContentIntent(activityPendingIntent)
@@ -115,16 +115,16 @@ class RENotificationSerivice(
         )
 
         val notification = NotificationCompat.Builder(context, RE_CHANNEL_ID)
-            .setSmallIcon(R.drawable.sack_dollar)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(name)
             .setContentText("Have you paid your mortgage of $money ?")
             .addAction(
-                R.drawable.sack_dollar,
+                R.drawable.ic_launcher_foreground,
                 "Yes",
                 activityPendingIntent,
 
                 ).addAction(
-                R.drawable.sack_dollar,
+                R.drawable.ic_launcher_foreground,
                 "No",
                 activityPendingIntentNo
 
@@ -145,7 +145,7 @@ class RENotificationSerivice(
         )
 
         val notification = NotificationCompat.Builder(context, RE_CHANNEL_ID)
-            .setSmallIcon(R.drawable.sack_dollar)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(name)
             .setContentText("Pay your taxes before $date to avoid extra charges")
             .setContentIntent(activityPendingIntent)

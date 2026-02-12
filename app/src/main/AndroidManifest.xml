@@ -13,13 +13,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.OnePortfolio">
+        android:theme="@style/Theme.OnePortfolio.Starting">
         <activity
             android:name=".app.MainActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.OnePortfolio">
+            android:theme="@style/Theme.OnePortfolio.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

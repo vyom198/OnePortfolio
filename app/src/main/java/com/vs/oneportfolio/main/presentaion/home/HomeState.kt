@@ -19,7 +19,7 @@ data class HomeState(
   val totalItemsInMetals : Int = 0,
   val cardClick : Boolean = false
 ) {
-
+  val totalassets = totalItemsInMetals + totalItemsinFA + totalItemsInRealEstate + totalItemsInTrade + totalItemsInCrypto
   val totalInvestedInAssets = totalInvested + totalInvestedInCrypto + totalInvestedInFA + totalInvestedInRealEstate + totalInvestedInMetals
 
   val totalCurrentValueInAssets = totalCurrentValue + totalCurrentValueOfCrypto + totalCurrentValueInFA + totalCurrentValueInRealEstate + totalCurrentValueOfMetals

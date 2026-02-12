@@ -40,7 +40,7 @@ class FANotificationService(
         )
 
         val notification = NotificationCompat.Builder(context, FA_CHANNEL_ID)
-            .setSmallIcon(R.drawable.sack_dollar)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(name)
             .setContentText("your asset is matured now worth $${money}")
             .setContentIntent(activityPendingIntent)
@@ -94,16 +94,16 @@ class FANotificationService(
         )
 
         val notification = NotificationCompat.Builder(context, FA_CHANNEL_ID)
-            .setSmallIcon(R.drawable.sack_dollar)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(name)
             .setContentText("Have you received payment of $${interest.toCommaString()} in your ${if (compounding) "Fixed Account" else "current Account"}?")
             .addAction(
-                R.drawable.sack_dollar,
+                R.drawable.ic_launcher_foreground,
                 "Yes",
                 activityPendingIntent,
 
                 ).addAction(
-                R.drawable.sack_dollar,
+                R.drawable.ic_launcher_foreground,
                 "No",
                 activityPendingIntentNo
 

@@ -1,5 +1,8 @@
 package com.vs.oneportfolio.main.di
 
+import android.content.Context
+import android.content.SharedPreferences
+import com.vs.oneportfolio.app.navigation.AppRoute.Permission
 import com.vs.oneportfolio.main.data.fixedAsset.notification.FANotificationService
 import com.vs.oneportfolio.main.data.realestate.notification.RENotificationSerivice
 import com.vs.oneportfolio.main.domain.fixedAsset.notification.FANotification
@@ -11,6 +14,7 @@ import com.vs.oneportfolio.main.presentaion.fixedAssets.history.FixedHistoryView
 import com.vs.oneportfolio.main.presentaion.home.HomeViewModel
 import com.vs.oneportfolio.main.presentaion.metals.MetalViewModel
 import com.vs.oneportfolio.main.presentaion.metals.history.SoldMetalViewModel
+import com.vs.oneportfolio.main.presentaion.permission.PermissionViewModel
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.PortfolioAnalysisViewModel
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.detail.PortfolioSavedViewModel
 import com.vs.oneportfolio.main.presentaion.portfoliohealth.history.PortfolioHealthHistoryViewModel
@@ -20,6 +24,7 @@ import com.vs.oneportfolio.main.presentaion.realestate.history.SoldEstateViewMod
 import com.vs.oneportfolio.main.presentaion.stocks.StockViewModel
 import com.vs.oneportfolio.main.presentaion.stocks.history.SoldStocksViewModel
 import kotlinx.serialization.json.Json
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -42,9 +47,12 @@ val mainModule = module {
     viewModelOf(::PortfolioAnalysisViewModel)
     viewModelOf(::PortfolioHealthHistoryViewModel)
     viewModelOf(::PortfolioSavedViewModel)
+    viewModelOf(::PermissionViewModel)
     singleOf(::FANotificationService) bind FANotification::class
     singleOf(::RENotificationSerivice) bind RENotification::class
-
+    single<SharedPreferences> {
+        androidContext().getSharedPreferences("vibe_prefs", Context.MODE_PRIVATE)
+    }
 
     single {
         Json {

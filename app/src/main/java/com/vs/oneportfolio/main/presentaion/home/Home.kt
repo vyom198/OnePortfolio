@@ -1,5 +1,6 @@
 package com.vs.oneportfolio.main.presentaion.home
 
+ import androidx.compose.animation.animateContentSize
  import androidx.compose.foundation.background
  import androidx.compose.foundation.clickable
  import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,8 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.foundation.layout.fillMaxWidth
  import androidx.compose.foundation.layout.height
  import androidx.compose.foundation.layout.padding
+ import androidx.compose.foundation.layout.requiredHeight
+ import androidx.compose.foundation.layout.requiredHeightIn
  import androidx.compose.foundation.layout.size
  import androidx.compose.foundation.layout.wrapContentHeight
  import androidx.compose.foundation.layout.wrapContentSize
@@ -33,12 +36,16 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.ui.Alignment
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.res.painterResource
  import androidx.compose.ui.text.font.FontFamily
  import androidx.compose.ui.text.font.FontStyle
  import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.text.style.TextAlign
  import androidx.compose.ui.unit.dp
  import androidx.compose.ui.unit.sp
  import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import com.vs.oneportfolio.R
  import com.vs.oneportfolio.core.theme.ui.EmeraldGreen
  import com.vs.oneportfolio.core.theme.ui.LossRed
  import com.vs.oneportfolio.core.theme.ui.SkyBlueAccent
@@ -94,6 +101,14 @@ fun HomeScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 ),
+                navigationIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        tint = Color.Unspecified
+                    )
+                },
                 title = {
                     Text("One Portfolio",
                         style = MaterialTheme.typography.topBarTitle,
@@ -116,7 +131,9 @@ fun HomeScreen(
 
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().clip(
+                modifier = Modifier.fillMaxWidth().requiredHeightIn(
+                    min = 170.dp
+                ).clip(
                     shape = RoundedCornerShape(16.dp)
                 ).background(
                     color = MaterialTheme.colorScheme.tertiary
@@ -124,92 +141,133 @@ fun HomeScreen(
                     horizontal = 16.dp,
                     vertical = 16.dp
                 ).clickable{
-                    onAction(HomeAction.OnCardClick)
-                },
+                    if (state.totalassets > 0) {
+                        onAction(HomeAction.OnCardClick)
+                    }
+
+                }.animateContentSize(),
                  verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-
-                Row (
-                    modifier = Modifier.fillMaxWidth() ,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Total Portfolio Value",
-                        style = MaterialTheme.typography.normal,
-                        color = SkyBlueAccent.copy(
-                            0.9f
+                if (state.totalassets <= 0) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.img), // Add appropriate icon
+                            contentDescription = null,
+                            modifier = Modifier.size(64.dp),
+                            tint = SkyBlueAccent
                         )
 
+                        // Main message
+                        Text(
+                            text = "No Assets Yet",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontWeight = FontWeight.SemiBold
+                        )
 
-                    )
-                    Icon(
-                        imageVector = if (state.isPositive) Icons.Filled.TrendingUp else Icons.Filled.TrendingDown,
-                        contentDescription = null,
-                        modifier = Modifier.size(
-                            34.dp
-                        ),
-                        tint = if (state.isPositive) EmeraldGreen else LossRed
-
-                    )
-
-                }
-                Text(
-                    text = "$${state.totalPortfolioValue.toCommaString()}",
-                    style = MaterialTheme.typography.normal.copy(
-                        fontWeight = FontWeight.SemiBold ,
-                        fontSize = 30.sp ,
-                        lineHeight = 36.sp,
-
-                    )
-                )
-                Text(
-                    text = "${if(state.isPositive){"+"} else {"-"}}$${state.absPnL.toCommaString()}(${state.pnlPercentage.absoluteValue.formats()}%)",
-                    style = MaterialTheme.typography.normal.copy(
-                        fontWeight = FontWeight.SemiBold ,
-                        fontSize = 16.sp ,
-                        lineHeight = 20.sp,
-                        color = if(state.isPositive) EmeraldGreen else LossRed
-
-                    )
-                )
-                Text(
-                    text = "Total Invested: $${state.totalInvestedInAssets.toCommaString()}",
-                    style = MaterialTheme.typography.normal.copy(
-                        fontWeight = FontWeight.SemiBold ,
-                        fontSize = 14.sp ,
-                        lineHeight = 20.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-
-                    )
-                )
-                if(state.cardClick){
-                    Spacer(modifier = Modifier.height(8.dp))
+                        // Sub message
+                        Text(
+                            text = "Start building your portfolio by adding your first asset",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                } else {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Get AI Generated Risk Analysis & Diversification Suggestions",
-                            style = MaterialTheme.typography.normal.copy(
-                                fontStyle = FontStyle.Italic,
-                                fontSize = 14.sp
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowRight,
-                            modifier = Modifier.size(
-                                32.dp
-                            ).clickable {
-                                onNavigateToPortfolioHealth()
-                            },
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            text = "Total Portfolio Value",
+                            style = MaterialTheme.typography.normal,
+                            color = SkyBlueAccent.copy(
+                                0.9f
+                            )
+
 
                         )
+                        Icon(
+                            imageVector = if (state.isPositive) Icons.Filled.TrendingUp else Icons.Filled.TrendingDown,
+                            contentDescription = null,
+                            modifier = Modifier.size(
+                                34.dp
+                            ),
+                            tint = if (state.isPositive) EmeraldGreen else LossRed
+
+                        )
+
+                    }
+                    Text(
+                        text = "$${state.totalPortfolioValue.toCommaString()}",
+                        style = MaterialTheme.typography.normal.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 30.sp,
+                            lineHeight = 36.sp,
+
+                            )
+                    )
+                    Text(
+                        text = "${
+                            if (state.isPositive) {
+                                "+"
+                            } else {
+                                "-"
+                            }
+                        }$${state.absPnL.toCommaString()}(${state.pnlPercentage.absoluteValue.formats()}%)",
+                        style = MaterialTheme.typography.normal.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            color = if (state.isPositive) EmeraldGreen else LossRed
+
+                        )
+                    )
+                    Text(
+                        text = "Total Invested: $${state.totalInvestedInAssets.toCommaString()}",
+                        style = MaterialTheme.typography.normal.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                        )
+                    )
+                    if (state.cardClick) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Get AI Generated Risk Analysis & Diversification Suggestions",
+                                style = MaterialTheme.typography.normal.copy(
+                                    fontStyle = FontStyle.Italic,
+                                    fontSize = 14.sp
+                                ),
+                                modifier = Modifier.weight(1f)
+                            )
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowRight,
+                                modifier = Modifier.size(
+                                    32.dp
+                                ).clickable {
+                                    onNavigateToPortfolioHealth()
+                                },
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+
+                            )
+                        }
                     }
                 }
+
+
 
             }
 

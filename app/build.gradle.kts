@@ -109,5 +109,5 @@ dependencies {
     implementation(libs.purchases)
     implementation(libs.purchases.store.amazon)
     implementation(libs.ktor.client.okhttp)
-
+   implementation(libs.androidx.datastore.preferences)
 }

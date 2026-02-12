@@ -49,15 +49,18 @@ fun SectorConcentrationCard(sectorConcentration: SectorConcentration) {
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
                         text = sector.sector,
-                        style = MaterialTheme.typography.names,
+                        style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.weight(0.2f)
                     )
                     
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(verticalAlignment = Alignment.CenterVertically,
+
+                    ) {
                         Text(
                             text = "${sector.percentage.toInt()}%",
                             style = MaterialTheme.typography.bodyMedium,
@@ -76,8 +79,9 @@ fun SectorConcentrationCard(sectorConcentration: SectorConcentration) {
                                 .padding(horizontal = 8.dp, vertical = 2.dp)
                         ) {
                             Text(
-                                text = sector.riskLevel,
+                                text = sector.riskLevel.split('(').first(),
                                 style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1,
                                 color = getRiskColor(sector.riskLevel),
                                 fontWeight = FontWeight.Medium
                             )

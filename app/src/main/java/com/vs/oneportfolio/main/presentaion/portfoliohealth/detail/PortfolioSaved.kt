@@ -78,7 +78,7 @@ fun PortfolioSavedScreen(
                 ),
                 title = {
                     Text(
-                        "Detail",
+                        "Saved Report",
                         style = MaterialTheme.typography.topBarTitle
                     )
 
