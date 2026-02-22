@@ -58,6 +58,9 @@ I implemented a **Freemium** model with a **"Lifetime Pro"** tier handled via **
 
 <img src="https://github.com/user-attachments/assets/9756acc6-6f81-4c4d-9318-a72b0660b34f" width="200">
 
+<img src="https://github.com/user-attachments/assets/4b505740-63bf-4b15-adf8-66583a20a5fd" width="200">
+
+
 
 
 
