@@ -39,6 +39,33 @@ I implemented a **Freemium** model with a **"Lifetime Pro"** tier handled via **
 * **API Constraints:** Navigating the limitations of free-tier financial APIs. To compensate for the lack of WebSockets, I optimized a lifecycle-aware polling system to maintain data accuracy while preserving battery life.
 * **Data Normalization:** Synthesizing dynamic "live" price data with static "physical" data into a single, cohesive net-worth visualization required complex mathematical transformations.
 
+## UI
+<img src="https://github.com/user-attachments/assets/8777a9e8-1013-428d-b324-af213a751fc6" width="200">
+
+<img src="https://github.com/user-attachments/assets/400615cd-af49-4bc9-bd75-097fd0e4d2de" width="200">
+
+<img src="https://github.com/user-attachments/assets/62c7274e-b860-46f1-9456-73f9f9224e3d" width="200">
+
+<img src="https://github.com/user-attachments/assets/6fe52e47-58c2-49b9-b16e-3baf96cdceaf" width="200">
+
+<img src="https://github.com/user-attachments/assets/49806b58-16e5-44ad-96c9-c03563d2d9fb" width="200">
+
+<img src="https://github.com/user-attachments/assets/ec0fcf99-0434-4e99-97c5-56163bff24a8" width="200">
+
+<img src="https://github.com/user-attachments/assets/9756acc6-6f81-4c4d-9318-a72b0660b34f" width="200">
+
+<img src="https://github.com/user-attachments/assets/90ffd57f-498b-4220-8b94-9e5985020da7" width="200">
+
+<img src="https://github.com/user-attachments/assets/9756acc6-6f81-4c4d-9318-a72b0660b34f" width="200">
+
+
+
+
+
+
+
+
+
 
 
 
