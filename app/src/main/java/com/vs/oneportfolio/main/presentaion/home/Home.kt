@@ -49,6 +49,8 @@ package com.vs.oneportfolio.main.presentaion.home
  import androidx.compose.ui.unit.sp
  import androidx.lifecycle.compose.collectAsStateWithLifecycle
  import com.revenuecat.purchases.CustomerInfo
+ import com.revenuecat.purchases.Purchases
+ import com.revenuecat.purchases.interfaces.ReceiveCustomerInfoCallback
  import com.revenuecat.purchases.models.StoreTransaction
  import com.revenuecat.purchases.ui.revenuecatui.PaywallDialog
  import com.revenuecat.purchases.ui.revenuecatui.PaywallDialogOptions
@@ -63,6 +65,7 @@ package com.vs.oneportfolio.main.presentaion.home
  import com.vs.oneportfolio.main.mapper.formats
  import com.vs.oneportfolio.main.mapper.toCommaString
  import org.koin.androidx.compose.koinViewModel
+ import timber.log.Timber
  import kotlin.math.absoluteValue
 
 @Composable
@@ -102,6 +105,7 @@ fun HomeScreen(
     onNavigateToPortfolioHealth : () -> Unit
 ) {
     var showPaywall by remember { mutableStateOf(false) }
+    val entitlementId = "premium"
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -265,8 +269,23 @@ fun HomeScreen(
                                 modifier = Modifier.size(
                                     32.dp
                                 ).clickable {
-                                    showPaywall = true
-                                    //onNavigateToPortfolioHealth()
+                                    Purchases.sharedInstance.getCustomerInfo(object :
+                                        ReceiveCustomerInfoCallback {
+                                        override fun onReceived(customerInfo: CustomerInfo) {
+                                            if (customerInfo.entitlements[entitlementId]?.isActive == true) {
+                                                // 2. User is Premium -> Direct Navigate
+                                                Timber.d(customerInfo.entitlements[entitlementId]?.isActive.toString())
+                                                onNavigateToPortfolioHealth()
+                                            } else {
+                                                // 3. User is Free -> Show Paywall
+                                                showPaywall = true
+                                            }
+                                        }
+                                        override fun onError(error: com.revenuecat.purchases.PurchasesError) {
+                                            // Fallback to paywall on error
+                                            showPaywall = true
+                                        }
+                                    })
                                 },
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimary

@@ -1,4 +1,4 @@
-package com.vs.oneportfolio.core.finnhubNetwork
+ package com.vs.oneportfolio.core.finnhubNetwork
 
 import  io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine

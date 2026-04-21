@@ -97,7 +97,7 @@ class PortfolioAnalyzer(
 
     private val modelWithSchema: GenerativeModel by lazy {
         ai.generativeModel(
-            modelName = "gemini-2.5-flash",
+            modelName = "gemini-2.5-flash-lite",
             generationConfig = generationConfig {
                 responseMimeType = "application/json"
                 responseSchema = portfolioHealthSchema

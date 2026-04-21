@@ -20,7 +20,7 @@ android {
         applicationId = "com.vs.oneportfolio"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
+        versionCode = 5
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -99,7 +99,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.material.icons.extended)
-    implementation("com.revenuecat.purchases:purchases-ui:8.2.0")
+    implementation("com.revenuecat.purchases:purchases-ui:9.21.0")
     implementation(libs.kotlin.client)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
